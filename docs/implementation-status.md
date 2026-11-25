@@ -1,6 +1,6 @@
 # Implementation status
 
-Snapshot: **25 November 2026**. This file records the scaffold's actual scope; architecture and roadmap documents describe the larger target.
+Implementation snapshot: **25 November 2026**; hosted CI setup updated **26 November 2026**. This file records the scaffold's actual scope; architecture and roadmap documents describe the larger target.
 
 ## Implemented foundation
 
@@ -34,7 +34,7 @@ Checked with JDK 17, Gradle 9.5.0, AGP 9.3.3, Kotlin 2.4.21, and compile SDK 37.
 | Connected instrumentation | **Not run** | No attached device/emulator was available; the host also lacks `/dev/kvm`. |
 | TalkBack, braille, and runtime UI testing | **Not run** | Requires the declared devices and assistive-technology configurations. |
 | Comparative studies / switching demand | **Not validated** | Product hypotheses and proposed study thresholds remain research work. |
-| Hosted CI | **Configured, not run here** | The local workflow performs repository checks, domain tests, APK build, lint, and instrumentation compilation. |
+| Hosted CI | **Run status tracked in Actions** | The first run found `sdkmanager` absent on the runner. The workflow now explicitly provisions SDK tools before running the checks. See [workflow runs](https://github.com/Axoineo/terminal/actions/workflows/ci.yml) for the current result. |
 
 The composite check was run as:
 

@@ -24,7 +24,10 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-      - name: Install Android SDK packages
-        run: sdkmanager 'platforms;android-37.1' 'build-tools;36.0.0' 'platform-tools'
+      - name: Provision Android SDK tools and packages
+        uses: android-actions/setup-android@v4
+        with:
+          cmdline-tools-version: '15859902'
+          packages: 'platforms;android-37.1 build-tools;36.0.0 platform-tools'
       - name: Unit tests, Android build, lint, and instrumentation compilation
         run: ./gradlew :core:domain:test :app:assembleDebug :app:lintDebug :core:data:assembleDebugAndroidTest --console=plain

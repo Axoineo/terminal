@@ -4,6 +4,8 @@
 
 Versions are pinned in [libs.versions.toml](../gradle/libs.versions.toml) and the Gradle Wrapper. This is a reproducible starting set, not a claim that every pin is the newest release.
 
+CI provisions command-line tools build `15859902` and the required SDK packages through [setup-android](https://github.com/android-actions/setup-android/tree/v4). It does not assume `sdkmanager` is preinstalled or available on the runner's `PATH`.
+
 | Tool | Pin / requirement |
 | --- | --- |
 | Java | JDK 17 |
