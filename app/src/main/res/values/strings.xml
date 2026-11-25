@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Terminal Workspace</string>
+    <string name="introduction">Projects, connections, and saved work.</string>
+    <string name="workspaces_title">Workspaces</string>
+    <string name="create_workspace">Create workspace</string>
+    <string name="workspace_name">Workspace name</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_workspaces">Create a workspace to organize your projects.</string>
+    <string name="remote_not_connected">Remote workspace · Not connected</string>
+    <string name="journal_title">Saved work</string>
+    <string name="no_tasks">No saved tasks.</string>
+    <string name="storage_error">Storage is unavailable. Saved work could not be loaded or updated.</string>
+    <string name="status_draft">Draft</string>
+    <string name="status_running">Running</string>
+    <string name="status_unknown">Completion unknown</string>
+    <string name="status_succeeded">Succeeded</string>
+    <string name="status_failed">Failed</string>
+</resources>
