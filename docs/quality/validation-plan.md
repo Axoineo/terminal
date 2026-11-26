@@ -2,9 +2,11 @@
 
 For the API 37 transport gate, include LAN permission denied/granted/revoked cases alongside a public-internet host. Test direct sockets, local hostname resolution and VPN routing against the [documented LAN contract](../architecture/system-design.md#local-network-access-on-the-selected-target-sdk). No such permission flow exists in the transport-free scaffold.
 
-Status: proposed QA and research gates. Last reviewed: 2026-11-25. The procedures and thresholds below have not been run unless a separate result record says so. They are acceptance targets, not benchmark results or proof of market demand.
+Status: proposed QA and research gates. Last reviewed: 2026-11-26. The procedures and thresholds below have not been run unless a separate result record says so. They are acceptance targets, not benchmark results or proof of market demand.
 
 The [product requirements](../product/product-requirements.md) define the intended behavior; the [roadmap](../product/roadmap.md) identifies when each gate is needed. The repository README lists the checks actually run for the current scaffold.
+
+The current priority is the fast reused-library SSH v1 in the revised roadmap. Its first acceptance route is saved host → explicit SHA-256 host-key verification → authenticate → existing terminal → disconnect/reconnect deliberately → reopen bounded saved history. Before calling that route usable, test changed-key rejection, cancelled authentication, multiline paste preview, resize, process restart and history deletion on a real device. The [dependency review](../security/dependency-review.md) records exact selected components and security checks still required. Local workspace/editor/synchronization fault cases below remain future-stage gates and do not block the narrowed v1 merely by existing in this plan.
 
 ## Evidence levels and result records
 
@@ -70,6 +72,40 @@ Distinguish activity recreation, process death, force-stop, and device reboot in
 For journal persistence, test a known numbered stream and compare the recovered committed prefix byte-for-byte. A pass requires no missing acknowledged chunk, no duplicate displayed chunk, and explicit gaps/unknown tail state when evidence is incomplete. Abrupt device power loss is a separate durability experiment; successful process-death tests do not establish power-loss guarantees.
 
 ## Gate Q2: storage, SAF, and synchronization
+
+### First local workspace acceptance route
+
+Run this before calling the local prototype hands-on usable. The current host has no connected Android device; JVM tests or compiled instrumentation are evidence of only those checks, not a passing route below. Record exact current limits from the implementation rather than assuming the planning defaults never change.
+
+1. Pick a fixture folder through SAF. Include nested folders, an empty file, spaces/Unicode names, supported UTF-8 content, a binary file, and a text file above the editor limit. Hash the provider source before import.
+2. Import into a new app-owned private workspace with visible progress. Verify the private file tree matches the supported input and the source tree remains unchanged.
+3. Browse/open a supported file. Edit it, leave and reopen it, and confirm the draft is retained while saved content remains unchanged until deliberate save. Revert/discard is also explicit.
+4. Save locally and verify exact resulting bytes and digest. Confirm the UI identifies the app-owned copy and never claims the provider source was updated.
+5. Close/restart the app, reopen the workspace and file, and verify the committed save and any separate unsaved draft. Repeat after a real process-death/force-stop test using the appropriate procedure, rather than only recreating the activity.
+6. Rehash the provider source and compare it byte-for-byte with the initial source. It must be unchanged. Confirm no remote execution, source write-back or sync claim appears.
+
+Every step needs a device result record, alongside TalkBack/keyboard operation for the essential actions. A successful import alone does not pass this route.
+
+| Local workspace fault | Required result |
+| --- | --- |
+| Cancel picker; cancel import during enumeration/read; cancel just before activation | Source stays unchanged, no partial project is presented as complete, and only operation-owned staging artifacts are cleaned |
+| Import reaches 2,000-entry, 50 MiB or depth-32 boundary (or actual configured limits) | Boundary behavior is deterministic and explained; test exactly at and one over each limit, including directories/empty entries and unknown reported sizes |
+| Provider reports a small size but streams more bytes; repeated/cyclic document identities; traversal-like names; duplicate/case-colliding paths | Streaming limits and containment still hold; no unbounded traversal, overwrite or escape; unsupported input produces an actionable error |
+| Provider permission revoked, provider closes early, returns null, stalls or becomes unavailable mid-import | Import does not activate truncated work as complete; error/cancel remains available and existing work stays intact |
+| Cancellation while cleanup or final activation runs | Ownership and state remain consistent; no finished project silently disappears and no unknown external path is deleted |
+| Out-of-space/failure while staging, saving, writing a draft or updating metadata | Previous saved file and independently committed draft remain recoverable according to the recorded commit boundary; no false saved marker |
+| UTF-8 split across read boundaries; invalid UTF-8; NUL/binary; file exactly at/over 256 KiB (or actual limit) | Supported text round-trips exactly; binary/invalid/oversized files open through an explicit unsupported/download path and are never silently decoded with replacement characters then saved |
+| Two local save requests with the same expected base; file changed after editor opened | At most one write against that base succeeds; later stale saves surface a conflict, preserving both the current file and draft |
+| Restored draft has an old base after a successful save/external local change | Draft is not automatically applied over new saved bytes; user sees the conflict and can retain/resolve both versions |
+| Navigate quickly between files/workspaces while reads, autosave or manual saves are pending | Each result is bound to workspace/path/revision identity; a late result never changes another file or marks another file saved |
+| Edit during an in-flight manual save | New edits stay dirty/drafted; completion of the older save cannot clear a newer draft or mark newer content saved |
+| Rotation/background/restart between file commit and draft cleanup | File/draft reconciliation is idempotent; never delete the only copy of newer unsaved edits |
+| Malicious or changed local symlink; swapped intermediate directory | No read/write escapes the private workspace; lexical path validation is not counted as proof of I/O containment |
+| Import copies finish but metadata insert/activation fails | No broken workspace is advertised as ready; recoverable staging/orphan state and cleanup are defined without deleting unrelated files |
+
+Filesystem and database changes do not form one transaction. Test their ordering explicitly. Local atomic replacement and expected-base checks protect app-coordinated saves only within their stated concurrency/containment contract; they do not grant ordinary SFTP universal compare-and-swap semantics. A read-only provider import is not a backup/export feature or bidirectional sync.
+
+### Broader storage and synchronization gates
 
 Test a local provider and at least one cloud/document provider after provider support exists. Use controlled fixtures with known byte hashes; include a many-file tree, a large file, Unicode names, case collisions, long names, links, executable bits, and missing/unsupported metadata. Record each provider's capabilities instead of assuming they match local files.
 

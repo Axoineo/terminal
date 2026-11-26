@@ -1,0 +1,26 @@
+Terminal Workspace — selected third-party components
+Prepared 26 November 2026
+
+ConnectBot termlib 0.3.15
+https://github.com/connectbot/termlib
+Apache-2.0.txt and termlib-NOTICE.txt
+
+libvterm, vendored revision 847 in termlib 0.3.15
+https://www.leonerd.org.uk/code/libvterm/
+libvterm-MIT.txt and libvterm-wcwidth-NOTICE.txt
+
+JSch maintained fork 2.28.8
+https://github.com/mwiede/jsch
+JSch-BSD.txt
+
+JZlib and jBCrypt code retained by the selected JSch artifact
+JZlib-BSD.txt and jBCrypt-ISC.txt
+
+Complete applicable license and permission texts for the components above
+are included in this directory. provenance.json identifies the inspected
+source/artifact origins and the copied text fingerprints.
+
+This selected-component bundle must be reconciled with the final APK's
+resolved AndroidX/Kotlin/coroutines/logging and embedded native/resource
+inventory before release. It is not yet a complete final-runtime inventory.
+License compliance and security verification are separate reviews.

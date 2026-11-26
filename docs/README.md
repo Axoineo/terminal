@@ -11,7 +11,10 @@ Research reviewed **25 November 2026**. The repository separates observed compet
 | [Product requirements](product/product-requirements.md) | Understand users, four product hypotheses, scope, acceptance criteria, and stop conditions. |
 | [System design](architecture/system-design.md) | Follow storage ownership, synchronization, task/session lifetimes, journaling, security, and runtime boundaries. |
 | [Technology evaluation](architecture/technology-evaluation.md) | Compare native UI, terminal engines, SSH libraries, PTYs, and local execution alternatives. |
-| [Roadmap](product/roadmap.md) | Turn the proposal into 26 implementation issues and evidence gates. |
+| [Roadmap](product/roadmap.md) | Follow the fast reused-library SSH v1, then separate hardening and optional workspace/runtime gates. |
+| [Delivery estimate](product/delivery-estimate.md) | See conditional engineering ranges, milestone scope, assumptions and reasons to re-estimate. |
+| [Dependency/security review](security/dependency-review.md) | Inspect selected library versions, known fixes, provenance and remaining runtime/device checks. |
+| [Third-party notices manifest](security/THIRD_PARTY_NOTICES.md) | Reconcile selected and embedded components with the final packaged notices. |
 | [Validation plan](quality/validation-plan.md) | Reproduce competitor workflows and test faults, accessibility, persistence, network changes, and recovery. |
 | [Development setup](development.md) | Install tools, build, run checks, and understand module dependencies. |
 | [Implementation status](implementation-status.md) | See exactly what exists and what has actually been checked. |
@@ -25,7 +28,7 @@ Research reviewed **25 November 2026**. The repository separates observed compet
 
 ## Recommended product sequence
 
-Own the project working copy and task records first. Add permission-based file import/export, then one secure remote terminal and SFTP round trip. Measure interruption recovery and accessible operation against current alternatives. Add a managed local runtime only if its separate feasibility and demand gates pass.
+Build the small Android SSH v1 with an existing terminal component, saved hosts/context and bounded saved history first. Verify selected dependencies and the host/auth trust boundary. Harden that route on real devices, then add project editing/sync or a managed local runtime only when their separate demand and feasibility gates pass. The conditional time ranges are in the [delivery estimate](product/delivery-estimate.md).
 
 The four opportunities are **consistent project context**, **verified recovery**, **durable received-output/task evidence**, and **accessible interaction**. Their shared foundation is workspace ownership and honest state. None requires promising unrestricted mobile OS behavior.
 

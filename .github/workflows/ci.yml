@@ -1,4 +1,4 @@
-name: Verify scaffold
+name: Verify Android
 
 on:
   push:
@@ -30,4 +30,18 @@ jobs:
           cmdline-tools-version: '15859902'
           packages: 'platforms;android-37.1 build-tools;36.0.0 platform-tools'
       - name: Unit tests, Android build, lint, and instrumentation compilation
-        run: ./gradlew :core:domain:test :app:assembleDebug :app:lintDebug :core:data:assembleDebugAndroidTest --console=plain
+        run: ./gradlew :core:domain:test :core:data:testDebugUnitTest :app:assembleDebug :app:lintDebug :core:data:assembleDebugAndroidTest --console=plain
+      - name: Resolved runtime dependencies
+        run: ./gradlew :app:dependencies --configuration debugRuntimeClasspath --console=plain > runtime-dependencies.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-debug-and-reports
+          retention-days: 7
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/reports/lint-results-debug.*
+            core/data/build/reports/tests/testDebugUnitTest/
+            core/domain/build/reports/tests/test/
+            core/data/schemas/
+            runtime-dependencies.txt

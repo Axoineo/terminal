@@ -1,0 +1,7 @@
+ConnectBot Terminal
+Copyright 2025 Kenny Root
+Copyright 2026 Kenny Root
+
+Apache License, Version 2.0.
+Upstream source headers and license are retained in the selected upstream source.
+No changes to the upstream library source are bundled by this application.
