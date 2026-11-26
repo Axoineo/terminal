@@ -19,6 +19,7 @@ import org.connectbot.terminal.InlineImages
 import org.connectbot.terminal.Terminal
 import org.connectbot.terminal.TerminalEmulator
 import org.connectbot.terminal.TerminalEmulatorFactory
+import org.connectbot.terminal.VTermKey
 
 /**
  * Own one of these per SSH session in a ViewModel (or a longer-lived session owner), rather than in
@@ -100,6 +101,20 @@ class TerminalSessionState(
         }
     }
 
+    /** A key event, not a bracketed paste payload. */
+    fun sendControlC() {
+        synchronized(lifetimeLock) {
+            if (!closed.get()) displayedEngine?.emulator?.dispatchCharacter(0, 3)
+        }
+    }
+
+    /** Let the engine encode Tab as keyboard input instead of bracketed pasted text. */
+    fun sendTab() {
+        synchronized(lifetimeLock) {
+            if (!closed.get()) displayedEngine?.emulator?.dispatchKey(0, VTermKey.TAB)
+        }
+    }
+
     override fun close() {
         synchronized(lifetimeLock) {
             if (!closed.compareAndSet(false, true)) return
@@ -166,7 +181,7 @@ fun TerminalPane(
     onPasteRequest: (() -> Unit)? = null,
 ) {
     val generation = state.engine ?: return
-    key(generation.id) {
+    key(state, generation.id) {
         DisposableEffect(state, generation) {
             state.attach(generation)
             onDispose { state.detach(generation) }

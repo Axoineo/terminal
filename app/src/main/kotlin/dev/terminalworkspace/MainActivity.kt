@@ -19,8 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -39,9 +39,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -52,6 +55,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.terminalworkspace.core.model.SavedSessionOutput
 import dev.terminalworkspace.terminal.TerminalPane
 import dev.terminalworkspace.terminal.TerminalSessionState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+private data class PasteReview(val text: String, val attemptId: Long)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,15 +82,34 @@ private fun ConsoleScreen(model: SshConsoleViewModel) {
     val context = LocalContext.current
     val sessions by model.savedSessions.collectAsStateWithLifecycle()
     var showHistory by remember { mutableStateOf(false) }
-    var pastePreview by remember { mutableStateOf<String?>(null) }
+    var showNotices by remember { mutableStateOf(false) }
+    var pastePreview by remember { mutableStateOf<PasteReview?>(null) }
+    var terminalVisible by rememberSaveable { mutableStateOf(model.connectionAttemptId > 0) }
+    var displayedAttemptId by rememberSaveable { mutableStateOf(model.connectionAttemptId) }
+    LaunchedEffect(model.connectionAttemptId) {
+        if (model.connectionAttemptId == 0L) terminalVisible = false
+        else if (displayedAttemptId != model.connectionAttemptId) terminalVisible = true
+        displayedAttemptId = model.connectionAttemptId
+    }
+    val showTerminal = model.busy || terminalVisible && model.connectionAttemptId > 0
+    LaunchedEffect(model.connectionAttemptId, model.connected) { pastePreview = null }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
         if (it) model.connect() else model.permissionDenied()
     }
-    val requestPaste = {
-        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        // Access only after a deliberate tap; no HTML, intents, automatic reads or remote OSC 52.
-        val item = clipboard.primaryClip?.takeIf { it.itemCount > 0 }?.getItemAt(0)
-        pastePreview = item?.text?.take(16_384)?.toString()
+    val requestPaste: () -> Unit = {
+        if (model.connected) {
+            val text = runCatching {
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                // Deliberate tap only: no URI coercion, HTML, intents, background reads or OSC 52.
+                val item = clipboard.primaryClip?.takeIf { it.itemCount > 0 }?.getItemAt(0)
+                item?.text?.let { raw ->
+                    var end = minOf(raw.length, 16_384)
+                    if (end > 0 && Character.isHighSurrogate(raw[end - 1])) end--
+                    raw.subSequence(0, end).toString()
+                }
+            }.getOrNull()
+            if (text != null) pastePreview = PasteReview(text, model.connectionAttemptId)
+        }
     }
     Scaffold(Modifier.fillMaxSize().imePadding()) { insets ->
         Column(Modifier.fillMaxSize().padding(insets).padding(horizontal = 16.dp),
@@ -92,9 +118,10 @@ private fun ConsoleScreen(model: SshConsoleViewModel) {
                 Text("Terminal Workspace", style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.weight(1f).padding(top = 12.dp))
                 TextButton(onClick = { showHistory = true }) { Text("History") }
+                TextButton(onClick = { showNotices = true }) { Text("Notices") }
             }
             Text(model.message, style = MaterialTheme.typography.bodySmall)
-            if (!model.busy) {
+            if (!showTerminal) {
                 Column(Modifier.weight(1f).verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("Connect to your server", style = MaterialTheme.typography.titleMedium)
@@ -113,11 +140,13 @@ private fun ConsoleScreen(model: SshConsoleViewModel) {
                     Text("Password authentication only. Requires a modern SSH server with strict key exchange and an ECDSA or RSA-SHA2 host key.",
                         style = MaterialTheme.typography.bodySmall)
                     Row {
-                        Checkbox(model.localNetwork, { model.localNetwork = it })
+                        Checkbox(model.localNetwork, { model.localNetwork = it },
+                            modifier = Modifier.semantics { contentDescription = "Local network or VPN server" })
                         Text("Local network or VPN server", modifier = Modifier.padding(top = 12.dp))
                     }
                     Row {
-                        Checkbox(model.recordOutput, { model.recordOutput = it })
+                        Checkbox(model.recordOutput, { model.recordOutput = it },
+                            modifier = Modifier.semantics { contentDescription = "Save received output on this device" })
                         Text("Save received output on this device", modifier = Modifier.padding(top = 12.dp))
                     }
                     Text("Output may contain secrets, including text echoed by the server. Recording is optional: first 256 KiB per session, latest 20 sessions. Passwords and typed input are not recorded separately. Backups are disabled.",
@@ -135,15 +164,19 @@ private fun ConsoleScreen(model: SshConsoleViewModel) {
                 }
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextButton(onClick = model::disconnect) { Text("Disconnect") }
+                    TextButton(onClick = {
+                        pastePreview = null
+                        model.disconnect()
+                        terminalVisible = false
+                    }) { Text(if (model.busy) "Disconnect" else "Back to connection form") }
                     TextButton(onClick = requestPaste, enabled = model.connected) { Text("Paste…") }
-                    TextButton(onClick = { model.terminal.paste("\u0003") }, enabled = model.connected) { Text("Ctrl-C") }
-                    TextButton(onClick = { model.terminal.paste("\t") }, enabled = model.connected) { Text("Tab") }
+                    TextButton(onClick = model.terminal::sendControlC, enabled = model.connected) { Text("Ctrl-C") }
+                    TextButton(onClick = model.terminal::sendTab, enabled = model.connected) { Text("Tab") }
                 }
                 Text(model.recordingMessage, style = MaterialTheme.typography.bodySmall)
             }
             // Retain the live terminal composition even when a history dialog is opened.
-            TerminalPane(model.terminal, Modifier.fillMaxWidth().weight(if (model.busy) 1f else 0.01f),
+            TerminalPane(model.terminal, Modifier.fillMaxWidth().weight(if (showTerminal) 1f else 0.01f),
                 keyboardEnabled = model.connected, showSoftKeyboard = model.connected,
                 onPasteRequest = requestPaste)
         }
@@ -151,7 +184,8 @@ private fun ConsoleScreen(model: SshConsoleViewModel) {
     model.trustPrompt?.let { prompt ->
         AlertDialog(onDismissRequest = { model.approveHost(false) },
             title = { Text("Verify this server") },
-            text = { Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            text = { Column(Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("${prompt.host}:${prompt.port}\nKey type: ${prompt.algorithm}")
                 Text(prompt.fingerprintSha256)
                 Text("Compare this fingerprint with a trusted source before approving. Approval pins this key on this device. A changed key will be blocked.")
@@ -159,14 +193,16 @@ private fun ConsoleScreen(model: SshConsoleViewModel) {
             confirmButton = { TextButton(onClick = { model.approveHost(true) }) { Text("Trust and connect") } },
             dismissButton = { TextButton(onClick = { model.approveHost(false) }) { Text("Cancel") } })
     }
-    pastePreview?.let { text ->
+    pastePreview?.takeIf { model.connected && it.attemptId == model.connectionAttemptId }?.let { review ->
         AlertDialog(onDismissRequest = { pastePreview = null }, title = { Text("Review paste") },
             text = { Column(Modifier.heightIn(max = 320.dp).verticalScroll(rememberScrollState())) {
                 Text("Pasted newlines may execute commands. Up to 16,384 characters are shown and sent.")
-                Text(text)
+                Text(review.text)
             } },
             confirmButton = { TextButton(onClick = {
-                if (model.connected) model.terminal.paste(text)
+                if (model.connected && review.attemptId == model.connectionAttemptId) {
+                    model.terminal.paste(review.text)
+                }
                 pastePreview = null
             }) { Text("Paste to server") } },
             dismissButton = { TextButton(onClick = { pastePreview = null }) { Text("Cancel") } })
@@ -188,6 +224,36 @@ private fun ConsoleScreen(model: SshConsoleViewModel) {
             } }, confirmButton = { TextButton(onClick = { showHistory = false }) { Text("Close") } })
     }
     model.selectedHistory?.let { HistoryViewer(it, model::closeHistory) }
+    if (showNotices) ThirdPartyNotices { showNotices = false }
+}
+
+@Composable
+private fun ThirdPartyNotices(onClose: () -> Unit) {
+    val context = LocalContext.current
+    var notices by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(context) {
+        notices = withContext(Dispatchers.IO) {
+            runCatching {
+                val files = context.assets.list("third_party").orEmpty().filter { it.endsWith(".txt") }
+                    .sortedWith(compareBy<String> { it != "THIRD_PARTY_NOTICES.txt" }.thenBy { it })
+                files.joinToString("\n\n━━━━━━━━━━━━━━━━━━━━\n\n") { file ->
+                    val body = context.assets.open("third_party/$file").bufferedReader().use { it.readText() }
+                    "$file\n\n$body"
+                }.ifEmpty { "No notices are packaged in this build." }
+            }.getOrElse { "The packaged notices could not be loaded." }
+        }
+    }
+    Dialog(onDismissRequest = onClose, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        MaterialTheme {
+            Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Third-party notices", style = MaterialTheme.typography.titleLarge)
+                TextButton(onClick = onClose) { Text("Close") }
+                SelectionContainer(Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState())) {
+                    Text(notices ?: "Loading packaged notices…", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
+    }
 }
 
 @Composable

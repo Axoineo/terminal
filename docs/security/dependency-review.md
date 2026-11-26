@@ -69,7 +69,7 @@ These are acceptance conditions, not a statement they already pass. Pure policy 
 | Complete resolved debug/release runtime and build-plugin inventory | Pending integration output |
 | Runtime JAR/AAR publisher signature verification and trusted fingerprints | Pending; hashes above are not a substitute |
 | Full transitive/native applicable-advisory scan and disposition | Pending resolved inventory; named findings only reviewed |
-| Final packaged notices/license assets | Pending reconciliation with [notices manifest](THIRD_PARTY_NOTICES.md) |
+| Selected engine notices/license assets | Complete selected-component texts copied to app assets with source/fingerprint manifest; final APK inclusion and full runtime inventory reconciliation pending [notices manifest](THIRD_PARTY_NOTICES.md) |
 | Android SSH/IME/TalkBack/native regression route | Not run on device in this environment |
 
 Recheck on any dependency/engine upgrade and before release. Maintain a dated finding/disposition log with exact artifact versions and reproducible checks. For newly discovered vulnerabilities use the upstream project's private security-report mechanism if offered, or its maintainer-published security contact. Do not invent an email address or send exploit/credential details to a public issue tracker. At review, [JSch](https://github.com/mwiede/jsch/security) and [termlib](https://github.com/connectbot/termlib/security) security pages did not provide a SECURITY.md policy; check current reporting options before disclosure. This document sends no external report.

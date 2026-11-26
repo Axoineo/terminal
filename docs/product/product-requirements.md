@@ -8,7 +8,7 @@ Build an Android workspace for short, consequential development tasks: open the 
 
 The product must make the location and state of work clear. A local copy, a selected Android document provider, and a remote directory are different locations. Received output, durably saved output, a live connection, and a confirmed command result are different facts.
 
-This repository is a starting point, not a working terminal client. Its intended initial implementation consists of Kotlin models, domain policies, an Android Room data layer, and a Compose demonstration screen. SSH, Mosh, PTY emulation, editing, SAF synchronization, backups, and recovery workflows are not implemented by that scaffold. Build and test results belong in the [repository README](../../README.md), not in product claims.
+The first implementation slice integrates an existing SSH client and terminal engine with a Compose connection screen and optional bounded received-output history. This is a smaller validation build than the broader workspace product described below. Mosh, editing, SAF synchronization, backups and remote task recovery remain deferred. Current build/test evidence and limitations are recorded in [implementation status](../implementation-status.md) and the [repository README](../../README.md).
 
 ## Users and jobs
 

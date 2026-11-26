@@ -2,6 +2,8 @@
 
 Prepared **26 November 2026** for selected fast-v1 components. This is the source-linked inventory/template for assembling distribution notices, **not a declaration that the final APK's complete license obligations are already satisfied**. Reconcile the actual packaged runtime graph and embedded native/resources, preserve required copyright notices, and include complete applicable license/NOTICE texts in distributed materials. URLs and a license label alone are not the finished notice bundle.
 
+Complete text copies for the selected terminal/SSH engines and their identified bundled notices are now under [app assets](../../app/src/main/assets/third_party/THIRD_PARTY_NOTICES.txt). [Provenance metadata](../../app/src/main/assets/third_party/provenance.json) records the exact selected source/artifact origins and copied-file SHA-256 values. The source bundle exists; final APK inclusion and the remaining runtime/transitive inventory still need reconciliation.
+
 ## Selected direct and embedded components
 
 | Component | Exact selected scope | License / notice source | Distribution work |
@@ -12,7 +14,7 @@ Prepared **26 November 2026** for selected fast-v1 components. This is the sourc
 | JZlib code bundled in JSch | Code/notice in selected JSch artifact, even if compression is unused | [JZlib notice](https://github.com/mwiede/jsch/blob/jsch-2.28.8/LICENSE.JZlib.txt), BSD-style | Preserve selected artifact's `META-INF/LICENSE.JZlib.txt` |
 | jBCrypt code bundled in JSch | Code/notice in selected JSch artifact, even when fast v1 has no imported-key feature | [jBCrypt notice](https://github.com/mwiede/jsch/blob/jsch-2.28.8/LICENSE.jBCrypt.txt), ISC-style permission notice | Preserve selected artifact's `META-INF/LICENSE.jBCrypt.txt` |
 
-The inspected JSch source JAR contains `META-INF/LICENSE.txt`, `META-INF/LICENSE.JZlib.txt` and `META-INF/LICENSE.jBCrypt.txt`. Confirm the runtime JAR and APK notice packaging rather than assuming source-JAR presence satisfies binary distribution requirements. No Termux application code or full Linux distribution is selected by this manifest.
+The inspected JSch source JAR contains `META-INF/LICENSE.txt`, `META-INF/LICENSE.JZlib.txt` and `META-INF/LICENSE.jBCrypt.txt`; exact copies are in `app/src/main/assets/third_party/`. The termlib license and selected vendored MIT/width texts were copied from tag `7a50d641ec92ef164645af1f4e39d0bf1a86b480`. Confirm the runtime JAR and APK packaging rather than assuming source-JAR presence satisfies binary distribution requirements. No Termux application code or full Linux distribution is selected by this manifest.
 
 ## Reconcile from the resolved graph
 
