@@ -1,46 +1,46 @@
 # Implementation status
 
-Source/status review: **26 November 2026**. The scope is now the fast reused-library SSH v1. This record distinguishes current source, earlier foundation checks and validation still pending for the new integration. Do not transfer a previous scaffold's passing build into a claim that new SSH/UI changes have passed.
+Verified code revision: **`1ed783d5eb171fb9addedaa7acd2bf94ab953f73`**, 26 November 2026. [Both CI jobs passed](https://github.com/Axoineo/terminal/actions/runs/45868354385). Subsequent documentation-only changes do not alter this APK.
 
-## Current source
+## Implemented first slice
 
-| Area | Implemented source / integration status | Boundary |
+| Area | Current behavior | Boundary |
 | --- | --- | --- |
-| Terminal engine | Pinned ConnectBot termlib 0.3.15; Compose adapter owns a native emulator through a retained session owner | No custom parser/renderer; device IME, resize, lifecycle and accessibility behavior still need testing |
-| SSH | Pinned mwiede JSch 2.28.8; one-shot client per attempt, password auth, raw PTY stream, resize/send/disconnect and cancellation cleanup | No SFTP/Mosh, key/MFA auth, forwarding, host bootstrap or automatic reconnect/replay |
-| Host trust | App-private pins, explicit SHA-256 TOFU approval, changed-key/algorithm rejection, atomic pin persistence before auth, damaged-store rejection | Does not advertise host-certificate/CA support or automatic key replacement; real handshake/device verification remains separate |
-| Crypto policy | Strict key exchange required; bounded configured RSA-SHA2/ECDSA route and modern cipher/MAC set; no certificate-to-key fallback | Unsupported servers/providers must fail explicitly; no claim that all host algorithms work on Android |
-| History | App-private Room session metadata/output, 256 KiB received-output cap, 20-session retention and deletion; bounded prefix buffer with truncation state | UI capture is intended default off per attempt; echoed remote secrets remain possible; no typed-input recorder, complete remote transcript or per-command result inference |
-| UI integration | Connection form, explicit host approval, live terminal, session-bound paste review, read-only history and notices | Password authentication only; no real-device SSH/IME pass recorded here |
-| Existing foundation | Workspace/task values, recovery/conflict/path policies and Room repositories remain | These models are not a working project editor or synchronization engine |
-| Selected-component notices | Complete text copies for termlib/Apache-2.0, vendored libvterm/MIT and width notice, JSch/JZlib/jBCrypt are in app assets, with provenance metadata | Final APK inclusion and transitive/runtime inventory reconciliation remain pending |
+| Terminal | ConnectBot termlib 0.3.15 supplies parsing, native emulation, rendering and input | Fresh engine per connection; no custom parser or local Linux environment |
+| SSH | JSch 2.28.8 supplies a password-authenticated PTY, input, resize and disconnect | One attempt per client; no key/MFA authentication, forwarding, SFTP or Mosh |
+| Host trust | Explicit SHA-256 fingerprint approval, private atomic pins before authentication, rejection of changed keys/types or damaged pins | Independent fingerprint verification is the user's responsibility; no automatic key replacement |
+| Crypto | Strict key exchange, RSA-SHA2/ECDSA host signatures, modern AES/SHA2 algorithms | Older servers and Ed25519-only configurations are outside this first supported route |
+| History | Capture starts off; optionally save the first 256 KiB received per session, latest 20 sessions, with truncation and deletion | Remote output can echo secrets; no input recorder, complete remote transcript or inferred command results |
+| Recovery | Saved output survives reopening; previously live session records become interrupted | Latest unflushed second may be lost; no automatic reconnect/replay or guaranteed Android process lifetime |
+| UI | Connection form, host approval, terminal, explicit paste review, Ctrl-C/Tab, read-only history and notices | Phone IME, accessibility and network usability still require field testing |
+| Existing foundation | Workspace/task values, conflict/path policies and Room repositories retained | No working editor, file synchronization, host runner or backup feature |
 
-## Not in v1
+## Verification
 
-No custom project file editor, SAF import/export route, SFTP conflict merge/sync, full received-output search/index, shell-semantic task tracking, multiplexer/host runner, Mosh, verified backup/restore or managed Linux environment is claimed. The [roadmap](product/roadmap.md) separates those later decisions from the narrow v1.
+All results below apply to the verified revision above.
 
-## New-integration verification record
-
-| Check | Current recorded result | Evidence / limitation |
+| Check | Result | Practical limit |
 | --- | --- | --- |
-| termlib source fix selection | **Reviewed** | 0.3.15 tag includes the known CSI overflow fixes; exact commits and source evidence in [dependency review](security/dependency-review.md) |
-| Pinned-source native regression | **Passed on host** | Three CSI cases compiled with ASan/UBSan exited 0; leak checking blocked by ptrace and disabled for the successful run. Not execution of packaged Android `.so` files. |
-| Artifact/ABI inspection | **Partial evidence obtained** | Inspected termlib AAR SHA-256 and four ABI LOAD alignments recorded; final APK packaging/device checks and publisher signature verification are separate |
-| JSch known-advisory triage | **Reviewed for named findings** | Selected 2.28.8 is newer than the upstream 2.28.6 revocation fix and includes later bounds hardening; this is not an exhaustive dependency scan |
-| Real loopback SSH tests | **Passed in CI** | Seven controlled-server tests plus three host-validation tests passed at `c24fe1b`; [run evidence](https://github.com/Axoineo/terminal/actions/runs/45866264242). That run later failed at the dependency-export task; its build/test step passed. |
-| Domain tests | **20 passed in CI** | Includes four raw-byte capture/cap/truncation tests; same run/revision above. Android history recovery/migration tests remain pending execution. |
-| Android build/lint/instrumentation compilation | **Passed at `c24fe1b`** | Debug APK, lint and both instrumentation APK compilations passed in that run. Later CI changes and added device smoke checks require the final run recorded below. |
-| Resolved runtime/build-plugin graph and complete advisory dispositions | **Pending integration output** | Top-level version pinning does not enumerate embedded/native or transitive code |
-| Final packaged notices/permissions | **Pending refreshed inspection** | Asset source exists; inspect actual APK contents and network/LAN permission behavior |
-| Android end-to-end SSH, IME, TalkBack/braille and lifecycle | **Not run on device in this environment** | No attached device/emulator; host lacks `/dev/kvm` |
-| User switching demand / comparative field use | **Not validated** | Research hypotheses remain hypotheses |
+| Repository links, issue catalog, XML/TOML and Python audit contracts | **Passed**; five Python contract tests | Contract tests exercise the OSV wrapper, not vulnerability absence |
+| Domain policies and bounded output | **20 JVM tests passed** | Pure policies, not Android network behavior |
+| SSH security/configuration | **10 JVM tests passed** | Seven real loopback server tests plus three host-validation tests; verifies pre-auth trust, pin persistence, changed keys, raw echo, cancellation and invalid input |
+| Debug APK, lint, both Android test APKs | **Passed; zero lint errors** | Update/unused-resource notices remain; debug signing is for testing |
+| Android persistence | **5 tests passed** on API 26 x86_64 emulator | Includes journal recovery, received-byte recovery, retention, deletion and v1→v2 migration |
+| Android app/native terminal | **2 tests passed** on that emulator | Launch/recreation plus packaged JNI CSI, split UTF-8 and engine replacement smoke test; not a parser memory-safety certification |
+| Resolved binary inventory and live OSV check | **99 external artifacts queried; zero mapped findings** | Native/vendored and package-unmapped advisories reviewed separately; no publisher-signature or vulnerability-absence claim |
+| APK permission inspection | Internet, local-network permission, AndroidX's own signature permission only | No broad-storage permission; API 37 LAN grant/denial needs field testing |
+| APK native packaging | **16 KiB ZIP alignment passed** | Earlier inspection of the same native dependencies found all eight ELF files aligned to 16 KiB with non-executable stacks; physical 16 KiB-page devices remain untested |
+| Packaged notices | **All 15 asset files match source bytes** | Includes 13 license/attribution texts; final release inventory still needs reconciliation |
+| Pinned-source parser regression | **Three host ASan/UBSan cases passed** | Leak checking was unavailable; this is separate from the packaged Android smoke test |
 
-The backend's duplicate coroutine cancellation-handler registration found during source review was corrected before this record; real loopback execution is still needed. Shared output across attempts is prevented by one-shot clients and caller-owned immutable session identity; final UI integration must preserve that boundary.
+Preserved [runtime inventory](security/evidence/2026-11-26/runtime-artifacts.tsv), [OSV report](security/evidence/2026-11-26/runtime-osv-report.json), [dependency graph](security/evidence/2026-11-26/runtime-dependencies.txt) and [permission report](security/evidence/2026-11-26/apk-permissions.txt) remain available after CI artifact expiration. See the [security review](security/dependency-review.md) for upstream fixes, exact hashes and coverage limits.
 
-## Historical foundation results
+The debug APK SHA-256 is `779dfc1546843991a8b559f853ff100b57d062b0065b28bdeb5ab979b75a348f`. It is available in the [CI build artifact](https://github.com/Axoineo/terminal/actions/runs/45868354385/artifacts/15140978957) while retained. CI artifacts require GitHub access and expire after seven days; they are not a production release channel.
 
-The earlier transport-free scaffold was checked with JDK 17, Gradle 9.5.0, AGP 9.3.3, Kotlin 2.4.21 and compile SDK 37.1 (target API 37, minimum API 26). Its recorded results were: repository validation passed; **16 domain tests passed**; Android debug build passed; lint passed with **0 errors/5 update warnings**; persistence instrumentation compiled; APK had no internet/broad-storage permission. Those are historical results for that limited source and are superseded by new network/UI/schema changes until refreshed.
+## Next acceptance work
 
-Connected instrumentation and assistive-technology checks were not run. Hosted CI initially needed explicit SDK-tool provisioning; current run results are tracked in [Actions](https://github.com/Axoineo/terminal/actions/workflows/ci.yml). See [development setup](development.md) for commands and [validation plan](quality/validation-plan.md) for device/fault gates.
+Test the build on a physical Android phone and a compatible controlled SSH host: fingerprint approval, authentication, typing/paste/resize, network loss, app switching and reopening history. JVM SSH tests plus Android native/UI tests do not establish Android SSH provider/server interoperability. Check API 37 LAN permission denial/revocation, OEM background killing, TalkBack/braille and common IMEs. Key authentication is the next interoperability feature; do not weaken a server's authentication or the client's crypto policy to fit this prototype.
 
-When CI supplies a new result, record exact revision, command, result and limits here. A compiled test APK is not a device pass, a loopback JVM peer is not Android provider compatibility, and a copied license bundle is not a complete final-runtime security or license audit.
+Publisher identity/signatures, reproducible source-to-binary correspondence, full release licensing/security reconciliation and release signing remain release work. CI also reports deprecated Node-20-era action majors (forced onto Node 24), including retired setup-java v4; migrating those pinned build tools is maintenance work, not a claimed app vulnerability. Research switching demand remains unvalidated.
+
+The earlier transport-free scaffold passed 16 domain tests and built without network permission. Those historical results are superseded by the concrete checks above. The [roadmap](product/roadmap.md), [delivery estimate](product/delivery-estimate.md) and [validation plan](quality/validation-plan.md) distinguish this narrow prototype from the broader workspace proposal.

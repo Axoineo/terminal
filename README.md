@@ -2,7 +2,7 @@
 
 A small Android SSH client built by reusing **ConnectBot termlib 0.3.15** for the terminal and **mwiede JSch 2.28.8** for SSH. The current v1 focuses on a real remote terminal, explicit host-key trust, transient password authentication and optional saved received-output history. **Terminal Workspace** remains a working name.
 
-The SSH/terminal adapters and history foundation are implemented in source; the first debug build and JVM checks have passed, while runtime dependency and Android device checks are in progress. See [implementation status](docs/implementation-status.md) for the exact current checks. A working APK build, a host-side SSH test and a real Android device session establish different things.
+The debug APK, 30 JVM tests, seven API 26 emulator tests, resolved-dependency OSV scan and APK packaging checks have passed. Physical-phone SSH, IME, network and accessibility testing remain. See [implementation status](docs/implementation-status.md) for the exact current checks. A working APK build, a host-side SSH test and a real Android device session establish different things.
 
 ## V1 scope
 
@@ -55,7 +55,7 @@ With an attached supported device/emulator:
 ./gradlew :core:data:connectedDebugAndroidTest :app:connectedDebugAndroidTest
 ```
 
-The source includes real loopback SSH fixtures for host verification/authentication ordering and cancellation, plus domain and persistence checks. Their presence is not a passing result; see the status record and [CI runs](https://github.com/Axoineo/terminal/actions/workflows/ci.yml). No connected Android device was available in the initial environment.
+The source includes real loopback SSH fixtures for host verification/authentication ordering and cancellation, plus domain and persistence checks. See the status record and [passing CI run](https://github.com/Axoineo/terminal/actions/runs/45868354385) for results and limits. CI ran Android 8 emulator tests; no physical-phone SSH session has been verified.
 
 The v1 needs internet access and the selected Android target's appropriate LAN permission for local hosts; denial/revocation must be handled by the app. Do not use a permissive host verifier or legacy crypto fallback to work around an unsupported server. Validate the final manifest and permission route on device.
 
