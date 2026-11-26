@@ -2,7 +2,7 @@
 
 A small Android SSH client built by reusing **ConnectBot termlib 0.3.15** for the terminal and **mwiede JSch 2.28.8** for SSH. The current v1 focuses on a real remote terminal, explicit host-key trust, transient password authentication and optional saved received-output history. **Terminal Workspace** remains a working name.
 
-The SSH/terminal adapters and history foundation are implemented in source; app integration and validation are in progress. See [implementation status](docs/implementation-status.md) for the exact current checks. A working APK build, a host-side SSH test and a real Android device session establish different things.
+The SSH/terminal adapters and history foundation are implemented in source; the first debug build and JVM checks have passed, while runtime dependency and Android device checks are in progress. See [implementation status](docs/implementation-status.md) for the exact current checks. A working APK build, a host-side SSH test and a real Android device session establish different things.
 
 ## V1 scope
 
@@ -46,13 +46,13 @@ Install JDK 17, Python 3.11+, and the SDK packages in [development setup](docs/d
 
 ```sh
 python3 scripts/validate_repository.py
-./gradlew :core:domain:test :core:data:testDebugUnitTest :app:assembleDebug :app:lintDebug :core:data:assembleDebugAndroidTest
+./gradlew :core:domain:test :core:data:testDebugUnitTest :app:assembleDebug :app:lintDebug :app:assembleDebugAndroidTest :core:data:assembleDebugAndroidTest
 ```
 
 With an attached supported device/emulator:
 
 ```sh
-./gradlew :core:data:connectedDebugAndroidTest
+./gradlew :core:data:connectedDebugAndroidTest :app:connectedDebugAndroidTest
 ```
 
 The source includes real loopback SSH fixtures for host verification/authentication ordering and cancellation, plus domain and persistence checks. Their presence is not a passing result; see the status record and [CI runs](https://github.com/Axoineo/terminal/actions/workflows/ci.yml). No connected Android device was available in the initial environment.
