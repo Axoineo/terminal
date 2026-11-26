@@ -1,87 +1,85 @@
 # Terminal Workspace: implementation roadmap
 
-Status: staged proposal, not a delivery commitment. Last reviewed: 2026-11-25. No dates or effort estimates below are established facts. Each stage ends in an evidence gate; a later stage does not imply the previous gate passed.
+Revised **26 November 2026**: prioritize a small Android SSH terminal built from existing terminal/SSH libraries. The broader workspace/editor/sync proposal is subsequent work, not a prerequisite for v1. The [delivery estimate](delivery-estimate.md) targets **3–7 focused development days** for fast v1, conditional on dependency fit, security checks and a real-device route; it separates the **6–10 week hardening horizon**.
 
-The [product requirements](product-requirements.md), [issue catalog](../research/issue-catalog.md), [system design](../architecture/system-design.md), and [validation plan](../quality/validation-plan.md) define the rationale and expected behavior. The repository README records what actually builds and which checks have run.
+This is a scope/order decision, not a passing gate or delivery guarantee. See [implementation status](../implementation-status.md) for actual implemented and tested behavior. The foundation contains Android/Compose modules, domain policies and Room records. Experimental workspace work does not imply a working terminal, complete editor/sync product or validated device behavior.
 
-## Current baseline
+## Stage 0: reuse selection and security verification
 
-The initial scaffold establishes Android/Kotlin/Compose module boundaries, domain models and policies, a Room data layer, and a safe disconnected demonstration UI. It is not a working SSH/Mosh client, terminal emulator, code editor, synchronization engine, environment manager, or backup tool. Test names and model types do not constitute end-to-end product validation.
+| Issue | Status / implementable scope | Done when |
+| --- | --- | --- |
+| TW-005 — Select existing terminal and transport | Priority v1 work: integrate a maintained component/library rather than implement a parser, renderer or SSH stack | Exact artifacts fit Android and the UI; licenses/notices, source provenance and native/transitive scope are recorded; essential input/auth tests pass |
+| TW-024 — Verify the v1 trust boundary and dependencies | Priority v1 subset: inspect resolved graph and current advisories, host verification, secret handling and cancellation | Applicable findings have an explicit disposition; changed host keys block; no trust-all verifier or secret logging; untested coverage is reported |
+| TW-001 — Check incumbent baseline briefly | Keep product judgment grounded without delaying the small build for a broad study | Name the intended user's concrete SSH/history task and what the prototype will improve; broader comparative studies remain later |
 
-Track work using the proposed issue IDs below. Split implementation issues further when needed, while retaining the requirement and research links.
+Record exact versions and review dates. Recheck relevant upstream advisories and vulnerability records for actual artifacts/transitives. No findings from one scan is not proof of security. Do not add many optional engines/protocols to hedge every possibility; select one working path, with an adapter boundary where useful.
 
-## Stage 0: validate the problem and establish a reliable foundation
+Exit gate: one terminal component and SSH library are selected on evidence, their provenance/licenses/security status are reviewable, and essential Android integration has been demonstrated. A failed candidate means a replacement/revised estimate, not relaxed trust handling. The [technology evaluation](../architecture/technology-evaluation.md) is a shortlist, not an installed-library claim.
 
-| Issue | Implementable scope | Done when | Dependencies / traces |
-| --- | --- | --- | --- |
-| TW-001 — Reproduce competitor workflows | Record exact installed versions and run edit–run–sync, interruption recovery, and accessible-output tasks in Acode, Termius, Moshi, and optional iOS Blink | A dated baseline names task setup, app tier, device, restrictions, and observed outcomes; untested claims stay labeled | H1/H3/H4; issues 06/18/19/26 |
-| TW-002 — Establish state contracts | Define project identity, relative paths, sync base/version observations, task intent, connection state, and evidence-backed outcomes | Deterministic policies reject impossible transitions and ambiguous overwrite decisions; model documentation matches code | W-01/W-02/W-04/J-01/J-02 |
-| TW-003 — Persist minimal workspace and task records | Implement Room repositories and migrations for real records; keep fixture/demo data separately labeled | A record is written, app relaunched, and record read on a device; migrations have a defined test path | J-01; no transport prerequisite |
-| TW-004 — Make the foundation accessible | Add labeled controls, readable status, focus order, large-text behavior, keyboard navigation, and semantics tests | Scaffold's essential actions work with TalkBack and keyboard; failures are logged before adding screens | A-01/A-05; required throughout |
-| TW-005 — Select terminal and transport through a spike | Evaluate emulator/protocol libraries, licenses, platform support, host-key handling, and capability boundaries | [Engine gate](../architecture/decisions/0004-engine-selection-gates.md) has a recorded decision and a reproducible spike, not a claimed integration | Required before Stage 2 |
+## Stage 1: fast v1 — SSH, existing terminal and saved history
 
-Exit gate: the core policy tests and Android assemble/lint checks pass in a supported build environment, the limited scaffold is honestly labeled, and initial competitor observations identify a concrete switch-worthy workflow. A missing SDK or unrun device check leaves the corresponding gate pending and must be reported rather than marked passed.
+| Issue | Implementable v1 scope | Done when |
+| --- | --- | --- |
+| TW-011 — One supported SSH path | Host/port/username entry, verified host-key enrollment/change handling, password auth, real terminal input/output and disconnect | A user connects to a supported test host on an Android device and can work; auth, reachability and changed-key failures are actionable |
+| TW-003 — Persist opted-in history | Reuse Room for connection metadata and received-output history with an explicit schema | Opted-in records reopen after app restart; no saved-profile manager or persistent credentials are implied |
+| TW-012 — Bounded received-output history | Save received output with honest capture boundaries; no saved-command manager | Saved content reopens; caps and deletion are defined; uncaptured/disconnected output is never called complete |
+| TW-013 — Explicit reconnection | Reopen app context without silently resubmitting commands | Disconnected state is clear; reconnect is deliberate; an uncertain remote outcome is not automatically retried |
+| TW-004 — Basic accessible operation | Labels, focus, readable status, keyboard/IME/paste behavior and essential TalkBack route | Essential actions are tested on a real device; broader terminal/braille claims remain unvalidated until tested |
 
-## Stage 1: a safe app-owned project working copy
+Exit route: enter host/port/username → verify identity → authenticate → existing terminal → deliberate disconnect/reconnect → reopen opted-in history and metadata. Include changed-host-key/auth rejection, multiline paste, resize, restart, retention limits and secret-handling checks. Build success and instrumentation compilation alone do not pass this device route. Saved-profile and saved-command managers are not shipped in this slice; add them later only if needed.
 
-| Issue | Implementable scope | Done when | Dependencies / traces |
-| --- | --- | --- | --- |
-| TW-006 — Create/import a project | Create a private canonical root; import a user-selected SAF tree with cancellable progress and explicit permission states | Failed/cancelled import does not damage the provider source; unsupported files and name collisions are explained | TW-002/003/004; W-01/W-03/W-07; issues 17/18 |
-| TW-007 — Implement file save and containment | Resolve paths safely, handle symlinks, use staging for writes, and preserve recoverable prior content | Traversal/link-escape fixtures cannot write outside the project; disk-full and interrupted-save cases retain a truthful recoverable state | TW-006; W-02/W-05 |
-| TW-008 — Implement sync planning and conflict UI | Track a base observation, compare both sides, show local/remote/provider differences, and revalidate before writing | Observed two-sided edits become conflicts; protection matches endpoint capabilities; accessible save-copy/strong-precondition options avoid promising universal SFTP compare-and-swap; cancellation preserves both versions | TW-007; W-04/W-05/W-06; issue 19 |
-| TW-009 — Add basic editor and common project context | Bind file tabs, saved content, requested commands, and supported tooling to one project root | A controlled edit–run preparation scenario refers to the intended project/revision; unsupported LSP/provider combinations are explicit | TW-006; W-01; issue 18 |
-| TW-010 — Test the workspace against the baseline | Run a formative study using the same fixture tasks as TW-001 | Results identify completed tasks, errors, app switches, confusion about authoritative copies, and specific next changes | TW-008/009; H1 |
+Do not infer individual shell command boundaries or success from a PTY screen/prompt. Saved history means the content actually retained by the implemented feature. Raw received output, explicit command snippets and verified task results are different capabilities. No remote host bootstrap, dotfile changes or package installation happens silently.
 
-Exit gate: the workspace safety suite passes, core screens are usable with TalkBack, and users can identify where their current work lives. This stage can validate storage and UX without claiming to execute commands.
+The selected target SDK's [LAN permission contract](../architecture/system-design.md#local-network-access-on-the-selected-target-sdk) belongs in the SSH integration when applicable. Mosh, automatic multiplexer setup, SFTP and a cooperating host runner are optional subsequent decisions, not v1 dependencies.
 
-## Stage 2: remote command execution with a durable journal
+## Stage 2: harden the narrow SSH product
 
-| Issue | Implementable scope | Done when | Dependencies / traces |
-| --- | --- | --- | --- |
-| TW-011 — Implement one supported SSH path | Add host profiles, verified host-key enrollment/change handling, supported credentials, connection lifecycle, and a real terminal view | A documented supported server can be connected securely; disconnects and auth/host-key failures are actionable; no silent trust bypass | TW-005; J-01/J-02 |
-| TW-012 — Persist command intent and received output | Commit task intent before send; append ordered output with explicit committed boundaries and retention | Forced process death cannot lose chunks the app acknowledged as saved; no success is inferred from a closed socket | TW-003/011; J-01/J-02/J-03; issue 06 |
-| TW-013 — Restore task context and reconcile | Restore records after relaunch; identify unknown outcomes; offer explicit reattach/check/restart actions according to capabilities | A killed app restores saved evidence; unknown-result commands are never automatically resubmitted | TW-012; J-04/J-05 |
-| TW-014 — Add supported shell integration | Identify command boundaries, cwd, and exit status for a declared shell set; maintain raw-session fallback | Unsupported or absent integration does not fabricate semantic metadata; terminal protocol conformance fixtures pass | TW-011/012; J-07 |
-| TW-015 — Add remote round-trip synchronization | Apply conflict-safe planning to a supported remote directory and associate execution with its synchronized revision | Remote changes during edit or upload produce conflicts or retryable errors; the UI identifies the revision the run used | TW-008/011; W-04/W-05/W-06; issue 19 |
-| TW-016 — Make terminal output accessible | Add line/word navigation, exact copying, controllable announcements, focus restoration, and braille input support | Real TalkBack/braille users complete command composition, output extraction, and recovery tasks independently | TW-004/011/012; A-02/A-03/A-04/A-05; issue 26 |
-| TW-017 — Compare recovery with incumbents | Test the same interrupted remote tasks in the prototype, Termius, Moshi, and optional Blink | Report distinguishes saved client output, server-side retained output, and reconnect-only state; demonstrates value beyond existing logs/reattachment or changes scope | TW-013/016; H3/H4 |
+| Issue | Scope after the v1 route | Done when |
+| --- | --- | --- |
+| TW-002 — Refine execution/evidence contracts | Keep connection state, sent intent, cached output and verified result distinct | Network changes and missing completion evidence never fabricate success/failure |
+| TW-014 — Optional supported shell integration | Add only if user workflows need per-command boundaries/cwd/results | Supported shells are explicit and raw-session fallback stays truthful |
+| TW-016 — Terminal accessibility | Precise output navigation/copy, announcement control and tested assistive input | Real TalkBack/braille users can perform the advertised route; no hardware claims without testing |
+| TW-017 — Compare actual recovery value | Compare the working product with Termius/Moshi and optional Blink using relevant features enabled | Evidence distinguishes cached received output, server-retained output and session reattachment |
+| TW-024 — Complete operational hardening | Device/IME/server matrix, auth/crypto interop, lifecycle/network faults, retention and migrations | Release blockers have passing evidence and residual support limits are documented |
+| TW-025/026 — Pilot and choose support scope | Bounded field use, repeated-task evidence and launch/support decisions | Actual reuse/failures/switching reasons are recorded separately from stated preference |
 
-Exit gate: lifecycle, journal, credential/host identity, synchronization, and accessibility checks pass on the declared device/server matrix. Formative participants correctly distinguish a confirmed result from an unknown outcome. A remote connection alone is not this milestone.
+The **6–10 week** estimate concerns this hardened narrow product and is conditional, not a promise to complete all later stages. Reuse still requires maintenance/advisory monitoring and regression checks on upgrades.
 
-Mosh is a later transport option. Its approval requires a specific capability contract; it must not be sold as providing complete unseen remote output or durable command history. A server-side multiplexer or optional agent is a separate dependency, with setup, compatibility, and failure behavior evaluated explicitly. TW-011 also includes the selected target SDK's [LAN permission contract](../architecture/system-design.md#local-network-access-on-the-selected-target-sdk), including denied/revoked access rather than treating every connection timeout as a server failure.
+## Stage 3: optional project workspace, editor and file round trip
 
-## Stage 3: portable recovery and backup before destructive maintenance
+These issues retain their IDs from the broader proposal. They are deferred from the fast-v1 critical path. Existing experiments may continue only when they help a demonstrated workflow; no whole stage is marked passed.
 
-| Issue | Implementable scope | Done when | Dependencies / traces |
-| --- | --- | --- | --- |
-| TW-018 — Version the export format | Define manifest, included/excluded data, checksums, credentials policy, format version, and compatibility errors | Users can see whether files, journal, settings, and remote mappings are included; excluded data is explicit | TW-003/012; R-04; issue 16 |
-| TW-019 — Implement export and staged verified restore | Stream export safely; import into a separate destination; validate integrity and safe paths before activation | Corrupt, truncated, oversized, incompatible, and traversal archives fail without damaging the active workspace; a verified round trip restores test content | TW-018; R-05 |
-| TW-020 — Add recoverability diagnostics | Report workspace/DB/export health and supported next actions | A failed check offers a concrete recovery path while preserving original evidence and files | TW-019; H2; issues 15/16 |
+| Issue | Proposed scope | Evidence gate |
+| --- | --- | --- |
+| TW-006 — Create/import a private project | Read-only SAF source import, staged activation, cancellation, explicit limits | Source unchanged; no partial project advertised as complete; provider errors and quotas tested |
+| TW-007 — Safe local save/containment | Expected-base digest check, staged file replacement, path/link containment and recovery | Stale saves/faults preserve saved content and drafts under the declared concurrency contract |
+| TW-009 — Editor/project context | Browse/open/edit/save/reopen supported files in one project | [Local acceptance route](../quality/validation-plan.md#first-local-workspace-acceptance-route) passes on device |
+| TW-008 — Conflict handling | Base/local/target revisions, merge/save-copy and explicit overwrite choices | Two-sided changes are preserved; no universal compare-and-swap claim for ordinary SFTP |
+| TW-015 — Optional SFTP round trip | One supported host/location and negotiated save capabilities | Upload/rename interruptions and the check/rename race are handled honestly |
+| TW-010 — Validate workspace value | Compare against actual Acode/Termux/Termius workflows | Repeated advantage beyond incumbent configuration is demonstrated |
 
-Exit gate: a restore drill on a fresh app installation passes with a real export. Uninstall removes app-private data; successful recovery requires an independent retained export. Backup transport or format support must never imply a backup already exists.
+The planning defaults for the first local experiment are small UTF-8 text up to 256 KiB and import up to 2,000 entries/50 MiB/depth 32. They are product scope limits to verify, not Android limits or benchmark results. Import does not imply source write-back, export or sync.
 
-## Stage 4: decide whether to own a local runtime
+## Stage 4: optional backup and recovery
 
-| Issue | Implementable scope | Done when | Dependencies / traces |
-| --- | --- | --- | --- |
-| TW-021 — Prove local engine and distribution feasibility | Compare bundled supported tools, external Termux cooperation, PRoot, available AVF integration, and remote-only scope | Document execution restrictions, supported devices, Play/sideload channel behavior, package ownership, update strategy, licenses, and background limits using current primary evidence | Stage 2/3 learning; engine gate; issues 15/17 |
-| TW-022 — Prototype staged environment repair | For one app-owned supported runtime, stage repair/rebuild and run health checks without touching project work | Injected package damage, disk exhaustion, interrupted repair, and failed verification preserve project content and a documented recovery route | TW-019/020/021; R-01/R-02/R-03 |
-| TW-023 — Validate repair value with users | Compare safe repair/rebuild with users' existing recovery workflow using disposable fixtures | Users understand the plan, retain work, verify usable tooling, and prefer it for a specific recurring problem | TW-022; H2 |
+| Issue | Proposed scope | Evidence gate |
+| --- | --- | --- |
+| TW-018 — Version export format | Included/excluded data, checksums, secrets policy and compatibility | Coverage is clear and actual exports match it |
+| TW-019 — Staged verified restore | Separate destination, safe paths, size checks and integrity before activation | Corrupt/truncated/malicious exports do not damage active work; fresh-install restore drill passes |
+| TW-020 — Diagnostics | Explain concrete supported recovery actions | Failed checks preserve evidence and never claim a repair succeeded without validation |
 
-Exit gate: implement local execution only if it is feasible on the intended devices/channel and provides value beyond the remote-first stage. Otherwise keep the product remote-first and document the decision. No app-level design can promise arbitrary local processes survive Android indefinitely.
+Uninstall removes app-private data; no documentation or backup format should imply an independent export already exists.
 
-## Stage 5: release hardening and product decision
+## Stage 5: independently decide managed local Linux
 
-| Issue | Implementable scope | Done when | Dependencies / traces |
-| --- | --- | --- | --- |
-| TW-024 — Finish operational quality gates | Complete device matrix, large-output/storage-budget tests, migrations, export compatibility, network transitions, and security review of trust boundaries | All release-blocking findings have reproducible passing checks; residual supported limitations are documented | Validation plan |
-| TW-025 — Run a bounded field pilot | Let target users perform real work with capture consent, support, and a known fallback | Report repeat usage, failures, switching reasons, accessibility findings, and abandonment reasons separately from study benchmarks | H1/H3/H4; H2 only if local gate passes |
-| TW-026 — Decide launch scope and support model | Choose supported servers/devices, distribution channels, pricing hypothesis, retention defaults, and support responsibility | Claims match tested capabilities; market assumptions and operating costs have explicit owners and evidence | TW-024/025 |
+| Issue | Proposed scope | Evidence gate |
+| --- | --- | --- |
+| TW-021 — Prove execution/distribution feasibility | Supported packaged tools, external Termux cooperation, PRoot/AVF where available, or staying remote-only | Modern target SDK/channel/device path, ownership, licenses, updates and resource limits are demonstrated |
+| TW-022 — App-owned environment repair | Staging, verification, rollback and project separation for one supported environment | Interrupted/failed repair preserves work and a verified recovery route |
+| TW-023 — Validate repair demand | Disposable broken-environment study against current recovery practices | Users identify a recurring advantage worth the maintenance cost |
 
-## Work deliberately outside the initial roadmap
+This can add months and may be rejected. It does not block v1 or turn a reused terminal component into a bundled Linux distro. No app can guarantee arbitrary local processes survive Android indefinitely.
 
-An iOS implementation, full desktop GUI streaming, arbitrary Docker/systemd/kernel compatibility, fleet management, AI command generation, broad plugin stores, and theme catalogs do not establish the current switching reason. They can be reconsidered when observed user work calls for them.
+## Tracking and scope control
 
-## Keeping the roadmap honest
-
-Use `proposed`, `in progress`, `implemented`, and `validated` separately in tracking. Attach a commit and check result to implementation completion; attach a study/fault-test record to validation completion. Record app and OS versions when rechecking competitors. Before expanding scope, re-evaluate whether existing apps have closed the claimed gap.
+Use `proposed`, `in progress`, `implemented`, `compiled` and `validated on device` separately. Attach exact revisions/check results to completion. Broad work such as an iOS app, arbitrary Docker/systemd compatibility, fleet management, AI command generation or a plugin marketplace needs its own evidence and estimate. Re-evaluate after the fast-v1 route and field use before expanding scope.

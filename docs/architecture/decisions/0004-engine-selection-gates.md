@@ -1,12 +1,21 @@
 # ADR 0004: Select engines through measured Android spikes
 
-Date: 25 November 2026. Status: **Accepted selection process; proposed candidates, no engine adopted**.
+Date: 25 November 2026. Status: **Accepted selection process; prototype engines adopted 26 November 2026**.
+
+## Prototype adoption — 26 November 2026
+
+The SSH preview adopts **ConnectBot termlib 0.3.15** and **mwiede JSch 2.28.8**.
+The [dependency review](../../security/dependency-review.md) records the exact
+artifacts, licenses and security findings; [implementation status](../../implementation-status.md)
+records the passing prototype checks and remaining physical-device/server tests.
+The decision below preserves the original candidate-selection rationale. Broader
+comparative, accessibility, performance and interoperability gates remain open.
 
 ## Context
 
 Parser correctness, Android IME/selection, crypto providers, JNI packaging and licenses matter more than a library popularity comparison. A basic project should not imply its eventual transport/rendering dependencies have been validated.
 
-## Decision
+## Initial decision — 25 November 2026
 
 Spike ConnectBot termlib first, compare isolated Termux terminal modules, and retain an adapter boundary. Termlib is Apache-2.0 with MIT libvterm; Termux's repository is GPLv3-only with explicit Apache-2.0 exceptions for terminal-view/emulator. Audit selected code and dependencies rather than applying a repository-wide shortcut. [termlib](https://github.com/connectbot/termlib), [Termux license](https://github.com/termux/termux-app/blob/master/LICENSE.md).
 

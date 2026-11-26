@@ -12,6 +12,8 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Update
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import dev.terminalworkspace.core.model.BackendKind
 import dev.terminalworkspace.core.model.ExecutionStatus
 import dev.terminalworkspace.core.model.JournalTask
@@ -85,14 +87,26 @@ interface TaskDao {
     suspend fun markInterrupted(nowMillis: Long)
 }
 
-@Database(entities = [WorkspaceEntity::class, TaskEntity::class], version = 1, exportSchema = true)
+@Database(entities = [WorkspaceEntity::class, TaskEntity::class, SavedSessionEntity::class], version = 2, exportSchema = true)
 abstract class WorkspaceDatabase : RoomDatabase() {
     abstract fun workspaceDao(): WorkspaceDao
     abstract fun taskDao(): TaskDao
+    abstract fun sessionHistoryDao(): SessionHistoryDao
 
     companion object {
         fun open(context: Context, name: String = "terminal-workspace.db"): WorkspaceDatabase =
-            Room.databaseBuilder(context.applicationContext, WorkspaceDatabase::class.java, name).build()
+            Room.databaseBuilder(context.applicationContext, WorkspaceDatabase::class.java, name)
+                .addMigrations(MIGRATION_1_2).build()
+
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""CREATE TABLE IF NOT EXISTS saved_sessions (
+                    id TEXT NOT NULL PRIMARY KEY, host TEXT NOT NULL, port INTEGER NOT NULL,
+                    username TEXT NOT NULL, startedAtMillis INTEGER NOT NULL,
+                    updatedAtMillis INTEGER NOT NULL, state TEXT NOT NULL,
+                    output BLOB NOT NULL, truncated INTEGER NOT NULL)""")
+            }
+        }
     }
 }
 

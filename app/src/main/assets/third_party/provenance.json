@@ -1,0 +1,283 @@
+{
+  "reviewed": "2026-11-26",
+  "scope": "Selected terminal/SSH and reviewed resolved Kotlin/coroutines/serialization/logging/native runtime components; final release graph reconciliation remains required.",
+  "components": [
+    {
+      "coordinate": "org.connectbot:termlib:0.3.15",
+      "source_commit": "7a50d641ec92ef164645af1f4e39d0bf1a86b480",
+      "inspected_aar_sha256": "85276764f139bc8457918dbfff8a4e3fd22da9b500e4569d2d882f37d67f8e57"
+    },
+    {
+      "coordinate": "com.github.mwiede:jsch:2.28.8",
+      "inspected_sources_jar_sha256": "c7d70a63b86a2b26015d28e1dc42dc26aa1ed43aaa97c16d3bce8ec53955f62c",
+      "runtime_jar_provenance": "Pending resolved artifact record"
+    }
+  ],
+  "license_files": [
+    {
+      "file": "Apache-2.0.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "source": "https://github.com/connectbot/termlib/blob/7a50d641ec92ef164645af1f4e39d0bf1a86b480/LICENSE"
+    },
+    {
+      "file": "termlib-NOTICE.txt",
+      "sha256": "620f6a10d3220e36abdd9414e48fc934776a3b7d53260ec9df47f7d465bfea3d",
+      "source": "https://github.com/connectbot/termlib/tree/7a50d641ec92ef164645af1f4e39d0bf1a86b480/lib/src/main"
+    },
+    {
+      "file": "libvterm-MIT.txt",
+      "sha256": "66c627cf44f0c59daf81ba442e62e9b3d3cd1091a41e116de5ea9058a57bbba7",
+      "source": "https://github.com/connectbot/termlib/blob/7a50d641ec92ef164645af1f4e39d0bf1a86b480/lib/src/main/cpp/libvterm/LICENSE"
+    },
+    {
+      "file": "libvterm-wcwidth-NOTICE.txt",
+      "sha256": "f840df447e83f67fddd471d27298f92f117597e4d8e3571a4cb7f61981cb3451",
+      "source": "https://github.com/connectbot/termlib/blob/7a50d641ec92ef164645af1f4e39d0bf1a86b480/lib/src/main/cpp/libvterm/src/unicode.c"
+    },
+    {
+      "file": "JSch-BSD.txt",
+      "sha256": "9c3537ab0b485b391b887b95fdff761de3dd3273a6931e8a1942dde4d2093cc5",
+      "source": "com.github.mwiede:jsch:2.28.8:sources!/META-INF/LICENSE.txt"
+    },
+    {
+      "file": "JZlib-BSD.txt",
+      "sha256": "9aa93e9bc58ae423a9e6476f608ee8f46063f5679e3bac0bc55f2f4b10d243ee",
+      "source": "com.github.mwiede:jsch:2.28.8:sources!/META-INF/LICENSE.JZlib.txt"
+    },
+    {
+      "file": "jBCrypt-ISC.txt",
+      "sha256": "a85927641ed1c8b95a5cef79b127b2392d80e0aa9d8e2d6f3b7b7401c5396af9",
+      "source": "com.github.mwiede:jsch:2.28.8:sources!/META-INF/LICENSE.jBCrypt.txt"
+    },
+    {
+      "file": "SLF4J-MIT.txt",
+      "sha256": "6632f550c207be8d7d6b5e87f5d7b905bee218d18392d531df457bf60bec1447",
+      "source": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.20/slf4j-api-2.0.20.jar!/META-INF/LICENSE.txt"
+    },
+    {
+      "file": "Kotlin-ThreeTenBP-BSD.txt",
+      "sha256": "d1bc53b493a3ab387b42717ed5c4b1976a5048996f81154278100bff86d39331",
+      "source": "https://github.com/JetBrains/kotlin/blob/v2.4.21/license/third_party/threetenbp_license.txt"
+    },
+    {
+      "file": "Kotlin-Boost-1.0.txt",
+      "sha256": "8d8291caf1cee26d23acf3eb67c9f9a2d58f1c681b16a4fbe8cbfb9e3c0b5a9b",
+      "source": "https://github.com/JetBrains/kotlin/blob/v2.4.21/license/third_party/boost_LICENSE.txt"
+    },
+    {
+      "file": "Coroutines-Apache-2.0.txt",
+      "sha256": "b1febe6399dffb10d19d35e7663ab16300c93cb0476a94115df1cc0097a8ffd8",
+      "source": "https://github.com/Kotlin/kotlinx.coroutines/blob/1.10.2/LICENSE.txt"
+    },
+    {
+      "file": "Serialization-Apache-2.0.txt",
+      "sha256": "c5accbbd8546e94c34aed24afe689a617627d18eed5a6c48277e48db57c23851",
+      "source": "https://github.com/Kotlin/kotlinx.serialization/blob/v1.7.3/LICENSE.txt"
+    },
+    {
+      "file": "Runtime-Apache-NOTICES.txt",
+      "sha256": "f7357f50aaaa481ebdbceb66813e318cecfa830c685243a3a21b5cac5517d95a",
+      "source": "Copyright-bearing comments extracted from exact version source JARs listed in this file; plus Kotlin v2.4.21/license/README.md"
+    }
+  ],
+  "limitations": [
+    "Copied license text and local hashes do not establish publisher signature verification.",
+    "Reproducible source-to-binary correspondence has not been established.",
+    "Text runtime graph and earlier debug APK inspected; exact resolved artifact TSV/live OSV output and final release native/resource/NOTICE reconciliation remain pending."
+  ],
+  "shared_license_sources": [
+    {
+      "file": "Apache-2.0.txt",
+      "byte_identical_sources": [
+        "https://github.com/JetBrains/kotlin/blob/v2.4.21/license/LICENSE.txt",
+        "https://github.com/JetBrains/kotlin/blob/v2.4.21/license/third_party/gwt_license.txt",
+        "https://github.com/JetBrains/kotlin/blob/v2.4.21/license/third_party/guava_license.txt"
+      ]
+    }
+  ],
+  "inspected_debug_artifact": {
+    "apk_sha256": "c2e052cd96e55541931f203118f62e9060c7c1f93423edc1b78a28a571f6398c",
+    "runtime_graph_sha256": "5d2306fcab923487441c1576b485a1a771da17db9265d50debb6d15eb294a007",
+    "scope": "Earlier c24 CI debug APK. New notice files were added afterwards and require inclusion check in a new APK.",
+    "native_libraries": [
+      "libjni_cb_term.so",
+      "libandroidx.graphics.path.so"
+    ],
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "observations": [
+      "Both native libraries present for all four ABIs.",
+      "All native ELF LOAD segments 0x4000-aligned; all GNU_STACK segments RW/non-executable.",
+      "All four packaged termlib native files byte-identical to previously inspected Maven AAR.",
+      "Earlier nine selected-component assets present; expanded notices not yet checked in a new APK."
+    ]
+  },
+  "resolved_runtime_review": {
+    "present": [
+      "org.connectbot:termlib:0.3.15",
+      "com.github.mwiede:jsch:2.28.8",
+      "org.jetbrains.kotlin:kotlin-stdlib:2.4.21",
+      "org.jetbrains.kotlin:kotlin-parcelize-runtime:2.4.21",
+      "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2",
+      "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2",
+      "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.3",
+      "org.slf4j:slf4j-api:2.0.20",
+      "androidx.graphics:graphics-path:1.1.0"
+    ],
+    "absent_from_resolved_app_runtime": [
+      "org.apache.sshd (MINA test peer)",
+      "Bouncy Castle",
+      "Conscrypt",
+      "Logback",
+      "Log4j",
+      "slf4j-simple"
+    ],
+    "limits": "Text graph includes platforms/constraints and is not itself a one-row-per-binary artifact inventory. Resolved artifact TSV and live OSV report pending."
+  },
+  "runtime_license_artifact_retrievals": [
+    {
+      "file": "kotlin-stdlib-2.4.21.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.4.21/kotlin-stdlib-2.4.21.jar",
+      "sha256": "bd8250210584cb659847dce9cda660f8e9906e5def7fbebcea93dc6dcb6a88a3",
+      "notices": []
+    },
+    {
+      "file": "kotlin-stdlib-2.4.21-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.4.21/kotlin-stdlib-2.4.21-sources.jar",
+      "sha256": "1e29c0668b0aa555e7b154e5da2e8094e1b755cfee25737839195bbbdad8a4a2",
+      "notices": []
+    },
+    {
+      "file": "kotlin-parcelize-runtime-2.4.21.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-parcelize-runtime/2.4.21/kotlin-parcelize-runtime-2.4.21.jar",
+      "sha256": "3f7612b7f2a659f0ec5204f533266c08e03e7888a112943d92fd740faefea133",
+      "notices": []
+    },
+    {
+      "file": "kotlin-parcelize-runtime-2.4.21-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-parcelize-runtime/2.4.21/kotlin-parcelize-runtime-2.4.21-sources.jar",
+      "sha256": "f98535d3558a8e0b08ed7c993a3559c1b89ad12c335824172485fe05ebb8f606",
+      "notices": []
+    },
+    {
+      "file": "kotlinx-coroutines-core-jvm-1.10.2.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.10.2/kotlinx-coroutines-core-jvm-1.10.2.jar",
+      "sha256": "5ca175b38df331fd64155b35cd8cae1251fa9ee369709b36d42e0a288ccce3fd",
+      "notices": []
+    },
+    {
+      "file": "kotlinx-coroutines-core-jvm-1.10.2-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.10.2/kotlinx-coroutines-core-jvm-1.10.2-sources.jar",
+      "sha256": "cd86e9635cc7ac1b7d9854ed589e3041fb11cc67d2273e7d312278ba5628e2c8",
+      "notices": []
+    },
+    {
+      "file": "kotlinx-coroutines-android-1.10.2.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-android/1.10.2/kotlinx-coroutines-android-1.10.2.jar",
+      "sha256": "e713f1f874244115a07571065cffa0f24f5e78300e9720fea16de3af1d75fd41",
+      "notices": []
+    },
+    {
+      "file": "kotlinx-coroutines-android-1.10.2-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-android/1.10.2/kotlinx-coroutines-android-1.10.2-sources.jar",
+      "sha256": "e903e0f46b8c5337816f2492ac3f9f543cb21ebf6b80fd0dbfe8cf38d1f3ebcf",
+      "notices": []
+    },
+    {
+      "file": "kotlinx-serialization-core-jvm-1.7.3.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.3/kotlinx-serialization-core-jvm-1.7.3.jar",
+      "sha256": "f0adde45864144475385cf4aa7e0b7feb27f61fcf9472665ed98cc971b06b1eb",
+      "notices": []
+    },
+    {
+      "file": "kotlinx-serialization-core-jvm-1.7.3-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.7.3/kotlinx-serialization-core-jvm-1.7.3-sources.jar",
+      "sha256": "d084ce9bf130919d4b899db09896531440d1e330919187c7932d7fe0fa5257b8",
+      "notices": []
+    },
+    {
+      "file": "slf4j-api-2.0.20.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.20/slf4j-api-2.0.20.jar",
+      "sha256": "7e1446499b359675d8aabe6af2de86b85e72ae8a2a932c0b40d0e5ba57097439",
+      "notices": [
+        "META-INF/LICENSE.txt"
+      ]
+    },
+    {
+      "file": "slf4j-api-2.0.20-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.20/slf4j-api-2.0.20-sources.jar",
+      "sha256": "565e509928d095e20c5d93ca5e3a528e98fc7410c3ca4e84b05ccfadf21b40ba",
+      "notices": [
+        "META-INF/LICENSE.txt"
+      ]
+    },
+    {
+      "file": "annotations-23.0.0.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/annotations/23.0.0/annotations-23.0.0.jar",
+      "sha256": "7b0f19724082cbfcbc66e5abea2b9bc92cf08a1ea11e191933ed43801eb3cd05",
+      "notices": []
+    },
+    {
+      "file": "annotations-23.0.0-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jetbrains/annotations/23.0.0/annotations-23.0.0-sources.jar",
+      "sha256": "ff2309b42f7584520497bb48bc609aca04c9886cf48708f14be83f00423ec144",
+      "notices": []
+    },
+    {
+      "file": "jspecify-1.0.0.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar",
+      "sha256": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab",
+      "notices": []
+    },
+    {
+      "file": "jspecify-1.0.0-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/org/jspecify/jspecify/1.0.0/jspecify-1.0.0-sources.jar",
+      "sha256": "adf0898191d55937fb3192ba971826f4f294292c4a960740f3c27310e7b70296",
+      "notices": []
+    },
+    {
+      "file": "error_prone_annotations-2.15.0.jar",
+      "url": "https://repo.maven.apache.org/maven2/com/google/errorprone/error_prone_annotations/2.15.0/error_prone_annotations-2.15.0.jar",
+      "sha256": "067047714349e7789a5bdbfad9d1c0af9f3a1eb28c55a0ee3f68e682f905c4eb",
+      "notices": []
+    },
+    {
+      "file": "error_prone_annotations-2.15.0-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/com/google/errorprone/error_prone_annotations/2.15.0/error_prone_annotations-2.15.0-sources.jar",
+      "sha256": "c1b58a188fb4eca9ccefbaff21209eb07df87751384e694b908a3df0288bef97",
+      "notices": []
+    },
+    {
+      "file": "listenablefuture-1.0.jar",
+      "url": "https://repo.maven.apache.org/maven2/com/google/guava/listenablefuture/1.0/listenablefuture-1.0.jar",
+      "sha256": "e4ad7607e5c0477c6f890ef26a49cb8d1bb4dffb650bab4502afee64644e3069",
+      "notices": []
+    },
+    {
+      "file": "listenablefuture-1.0-sources.jar",
+      "url": "https://repo.maven.apache.org/maven2/com/google/guava/listenablefuture/1.0/listenablefuture-1.0-sources.jar",
+      "sha256": "3d1bd8d4a39b293612a40e547ec51d9ce34fa638d7adeae83871cdbe2923b161",
+      "notices": []
+    },
+    {
+      "file": "graphics-path-1.1.0.aar",
+      "url": "https://dl.google.com/dl/android/maven2/androidx/graphics/graphics-path/1.1.0/graphics-path-1.1.0.aar",
+      "sha256": "d031370d45ba4129a175fe9de913328a512b01a3c267e0eaf6b9b759f35842ae",
+      "notices": [
+        "META-INF/androidx/graphics/graphics-path/LICENSE.txt"
+      ]
+    },
+    {
+      "file": "graphics-path-1.1.0-sources.jar",
+      "url": "https://dl.google.com/dl/android/maven2/androidx/graphics/graphics-path/1.1.0/graphics-path-1.1.0-sources.jar",
+      "sha256": "18745465f8ec21337325b45682b2c5bd223413d756820faa27466aee42ee0790",
+      "notices": [
+        "META-INF/androidx/graphics/graphics-path/LICENSE.txt"
+      ]
+    }
+  ]
+}
