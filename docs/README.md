@@ -6,6 +6,8 @@ Research reviewed **25 November 2026**. The repository separates observed compet
 
 | Document | Purpose |
 | --- | --- |
+| [Security policy](../SECURITY.md) | Report a vulnerability and understand the current trust/privacy boundaries. |
+| [Contribution guide](../CONTRIBUTING.md) | Choose a focused change, reproduce a bug, and run relevant checks. |
 | [Competitive audit](research/competitive-audit.md) | Understand all 12 requested apps and current feature corrections. |
 | [Master issue catalog](research/issue-catalog.md) | Find all 33 stable issue IDs, affected products, evidence, severity, usefulness, feasibility, and bounded solutions. |
 | [Product requirements](product/product-requirements.md) | Understand users, four product hypotheses, scope, acceptance criteria, and stop conditions. |

@@ -11,8 +11,8 @@ Verified code revision: **`1ed783d5eb171fb9addedaa7acd2bf94ab953f73`**, 26 Novem
 | Host trust | Explicit SHA-256 fingerprint approval, private atomic pins before authentication, rejection of changed keys/types or damaged pins | Independent fingerprint verification is the user's responsibility; no automatic key replacement |
 | Crypto | Strict key exchange, RSA-SHA2/ECDSA host signatures, modern AES/SHA2 algorithms | Older servers and Ed25519-only configurations are outside this first supported route |
 | History | Capture starts off; optionally save the first 256 KiB received per session, latest 20 sessions, with truncation and deletion | Remote output can echo secrets; no input recorder, complete remote transcript or inferred command results |
-| Recovery | Saved output survives reopening; previously live session records become interrupted | Latest unflushed second may be lost; no automatic reconnect/replay or guaranteed Android process lifetime |
-| UI | Connection form, host approval, terminal, explicit paste review, Ctrl-C/Tab, read-only history and notices | Phone IME, accessibility and network usability still require field testing |
+| Recovery | Saved output survives reopening; previously live session records become interrupted | Unflushed output may be lost; normal approximately one-second flush scheduling is not a durability bound. No automatic reconnect/replay or guaranteed process lifetime. |
+| UI | Connection form, host approval, terminal, app Paste… review, Ctrl-C/Tab, read-only history and notices | IMEs may commit clipboard text without the app's paste preview; phone IME, accessibility and network usability still require field testing |
 | Existing foundation | Workspace/task values, conflict/path policies and Room repositories retained | No working editor, file synchronization, host runner or backup feature |
 
 ## Verification

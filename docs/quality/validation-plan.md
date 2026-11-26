@@ -1,12 +1,14 @@
 # Terminal Workspace: validation plan
 
-For the API 37 transport gate, include LAN permission denied/granted/revoked cases alongside a public-internet host. Test direct sockets, local hostname resolution and VPN routing against the [documented LAN contract](../architecture/system-design.md#local-network-access-on-the-selected-target-sdk). No such permission flow exists in the transport-free scaffold.
+For the API 37 transport gate, include LAN permission denied/granted/revoked cases alongside a public-internet host. Test direct sockets, local hostname resolution and VPN routing against the [documented LAN contract](../architecture/system-design.md#local-network-access-on-the-selected-target-sdk). The SSH preview implements a permission route; its API 37 behavior remains to be verified on device.
 
 Status: proposed QA and research gates. Last reviewed: 2026-11-26. The procedures and thresholds below have not been run unless a separate result record says so. They are acceptance targets, not benchmark results or proof of market demand.
 
-The [product requirements](../product/product-requirements.md) define the intended behavior; the [roadmap](../product/roadmap.md) identifies when each gate is needed. The repository README lists the checks actually run for the current scaffold.
+The [product requirements](../product/product-requirements.md) define the intended behavior; the [roadmap](../product/roadmap.md) identifies when each gate is needed. The [implementation status](../implementation-status.md) records checks actually run for the verified preview revision.
 
 The current priority is the fast reused-library SSH v1 in the revised roadmap. Its first acceptance route is host/port/username entry → explicit SHA-256 host-key verification → authenticate → existing terminal → disconnect/reconnect deliberately → reopen opted-in bounded received-output history. No saved-profile/command manager is implied. Before calling that route usable, test changed-key rejection, cancelled authentication, multiline paste preview, resize, process restart and history deletion on a real device. The [dependency review](../security/dependency-review.md) records exact selected components and security checks still required. Local workspace/editor/synchronization fault cases below remain future-stage gates and do not block the narrowed v1 merely by existing in this plan.
+
+Exercise both the app's **Paste…** action and clipboard text committed by an IME. The latter may arrive as ordinary input without the app's paste preview; record that distinction in device results.
 
 ## Evidence levels and result records
 

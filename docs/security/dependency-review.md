@@ -82,9 +82,9 @@ Pinned termlib source also bounds unterminated OSC accumulation: `TerminalTextDe
 | --- | --- |
 | SSH host identity | Explicit SHA-256 TOFU prompt with host/port/algorithm; no password sent before acceptance; exact known key accepted; changed key fails closed; cancel cannot pin or connect |
 | Algorithm policy | Tested modern RSA-SHA2/ECDSA configuration; no DSA, SHA-1 host-signature, weak cipher or compatibility fallback silently added. Unsupported Ed25519/provider combinations produce an honest unsupported error. |
-| Credentials | No persistent password/private key by default; no typed-input logging; secrets absent from database/history/debug logs and error strings |
+| Credentials | No credential-specific persistence or diagnostics, private-key storage or typed-input logging. Opted-in raw output can still contain secrets echoed by the server. |
 | Terminal output | Remote bytes are untrusted, including clipboard/URL/title/image/control sequences. OSC 52 disabled or deliberately gated; remote output never launches a URL automatically; bound parsing/history/resources. |
-| Paste | Preview and deliberate send for clipboard/multiline content; no invisible newline-triggered command execution |
+| Paste | The app's Paste… action previews clipboard text before deliberate send. Test IME-committed text separately; it may arrive as ordinary input without this preview. Newlines can execute commands. |
 | History | Capture default off and explicitly enabled per attempt; app-private Room storage caps received output at 256 KiB per session and 20 saved sessions, with deletion. Serialize snapshot writes so an older snapshot cannot replace a newer one. Received-output-only claim: echoed passwords/tokens can still appear, and users can disable/clear capture. |
 | Cancellation/lifetime | Cancel auth/connect, drop network, resize and close; cleanup sockets/native handles; restored state does not auto-replay input or invent a successful result |
 | Backup/export | Verify final manifest/extraction behavior for retained output/host metadata; no implicit cloud synchronization or credential backup claim |

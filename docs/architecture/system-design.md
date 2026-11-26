@@ -52,9 +52,9 @@ Review real handshake tests for unknown rejection before password authentication
 
 The owner retains the termlib emulator across configuration changes and closes its native handle when the attempt/view is permanently disposed. Feed transport bytes in order and preserve arbitrary UTF-8/escape read boundaries; the upstream engine owns parsing. Keep callbacks asynchronous with respect to feeding the emulator to avoid native callback reentry/deadlock. Serialize input/send and resize operations where ordering matters.
 
-Remote output is untrusted. The adapter disables OSC 52 clipboard copy and inline image decoding, disables automatic URL detection and provides no automatic external hyperlink intent. Clipboard access is an explicit user request with paste preview/deliberate send, especially for multiline content. Password entry is separate from the terminal input/recording path. These choices reduce attack surface but are not a native-parser security guarantee.
+Remote output is untrusted. The adapter disables OSC 52 clipboard copy and inline image decoding, disables automatic URL detection and provides no automatic external hyperlink intent. The app's Paste… action requests clipboard text explicitly and previews it before sending. An IME may commit clipboard text as ordinary input without that preview; this is a separate input path to test. Password entry is separate from the terminal input/recording path. These choices reduce attack surface but are not a native-parser security guarantee.
 
-The selected termlib source includes known CSI parameter/numeric overflow fixes; three pinned-source host-side sanitizer cases passed. Packaged Android native execution, broader malformed sequences, IME/selection/resize and accessibility still require validation. [Recorded evidence](../security/dependency-review.md).
+The selected termlib source includes known CSI parameter/numeric overflow fixes; three pinned-source host-side sanitizer cases passed. The packaged Android native smoke test also passed on an API 26 x86_64 emulator. Broader malformed sequences, IME/selection/resize, accessibility and physical-device/server behavior still require validation. [Recorded evidence](../security/dependency-review.md).
 
 ## Optional received-output history
 

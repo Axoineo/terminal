@@ -29,7 +29,8 @@ def anchors(text: str) -> set[str]:
 
 def validate() -> list[str]:
     errors: list[str] = []
-    markdown = [ROOT / "README.md", ROOT / "CONTRIBUTING.md", *sorted((ROOT / "docs").rglob("*.md"))]
+    markdown = [ROOT / "README.md", ROOT / "CONTRIBUTING.md", ROOT / "SECURITY.md",
+                *sorted((ROOT / "docs").rglob("*.md"))]
     for path in markdown:
         if not path.is_file():
             errors.append(f"Missing document: {path.relative_to(ROOT)}")
