@@ -38,12 +38,14 @@ jobs:
         with:
           cmdline-tools-version: '15859902'
           packages: 'platforms;android-37.1 build-tools;36.0.0 platform-tools'
-      - name: Unit tests, Android build, lint, and instrumentation compilation
-        run: ./gradlew :core:domain:test :core:data:testDebugUnitTest :app:assembleDebug :app:lintDebug :app:assembleDebugAndroidTest :core:data:assembleDebugAndroidTest --console=plain
       - name: Resolved runtime dependencies
         run: |
           ./gradlew :app:dependencies --configuration debugRuntimeClasspath --console=plain > runtime-dependencies.txt
           ./gradlew :app:exportRuntimeArtifacts --console=plain
+      - name: Check resolved runtime dependencies against OSV
+        run: python3 scripts/audit_runtime_dependencies.py app/build/reports/runtime-artifacts.tsv --output app/build/reports/runtime-osv-report.json
+      - name: Unit tests, Android build, lint, and instrumentation compilation
+        run: ./gradlew :core:domain:test :core:data:testDebugUnitTest :app:assembleDebug :app:lintDebug :app:assembleDebugAndroidTest :core:data:assembleDebugAndroidTest --console=plain
       - name: Inspect APK permissions, native alignment and notices
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/aapt2" dump permissions app/build/outputs/apk/debug/app-debug.apk > app/build/reports/apk-permissions.txt
@@ -58,8 +60,6 @@ jobs:
               pathlib.Path('app/build/reports/apk-native-files.txt').write_text('\n'.join(native) + '\n')
           print('Packaged notices match source assets.')
           PY
-      - name: Check resolved runtime dependencies against OSV
-        run: python3 scripts/audit_runtime_dependencies.py app/build/reports/runtime-artifacts.tsv --output app/build/reports/runtime-osv-report.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:

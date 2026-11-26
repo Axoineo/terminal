@@ -1,4 +1,4 @@
-Terminal Workspace — selected third-party components
+Terminal Workspace — reviewed third-party components
 Prepared 26 November 2026
 
 ConnectBot termlib 0.3.15
@@ -16,11 +16,32 @@ JSch-BSD.txt
 JZlib and jBCrypt code retained by the selected JSch artifact
 JZlib-BSD.txt and jBCrypt-ISC.txt
 
-Complete applicable license and permission texts for the components above
-are included in this directory. provenance.json identifies the inspected
-source/artifact origins and the copied text fingerprints.
+Kotlin standard library and parcelize runtime 2.4.21
+Apache-2.0.txt and Runtime-Apache-NOTICES.txt
+The standard library also contains derived ThreeTenBP and Boost code:
+Kotlin-ThreeTenBP-BSD.txt and Kotlin-Boost-1.0.txt
+GWT/Guava Apache license texts in the selected Kotlin release are identical
+to Apache-2.0.txt; their attributions are retained in Runtime-Apache-NOTICES.txt.
 
-This selected-component bundle must be reconciled with the final APK's
-resolved AndroidX/Kotlin/coroutines/logging and embedded native/resource
-inventory before release. It is not yet a complete final-runtime inventory.
+kotlinx.coroutines core JVM / Android 1.10.2
+Coroutines-Apache-2.0.txt
+
+kotlinx.serialization core JVM 1.7.3
+Serialization-Apache-2.0.txt and Runtime-Apache-NOTICES.txt
+
+SLF4J API 2.0.20
+SLF4J-MIT.txt (no logging provider added)
+
+AndroidX, Compose, Room, Material and remaining reviewed Apache runtimes
+Apache-2.0.txt and Runtime-Apache-NOTICES.txt
+This includes packaged AndroidX graphics-path 1.1.0 native code as well
+as the termlib native code listed above.
+
+Complete copied license and permission texts for the identified components
+above are included in this directory. provenance.json identifies inspected
+source/artifact origins, scope and copied text fingerprints.
+
+The earlier debug APK's selected notices and runtime graph were inspected.
+This expanded source bundle still requires a new APK inclusion check and
+final release runtime/native/resource/NOTICE reconciliation before release.
 License compliance and security verification are separate reviews.

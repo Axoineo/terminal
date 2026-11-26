@@ -83,7 +83,11 @@ abstract class ExportRuntimeArtifacts : DefaultTask() {
 
 configurations.all {
     if (name == "debugRuntimeClasspath") {
-        val resolved = incoming.artifacts.resolvedArtifacts
+        // Local Android projects publish multiple artifact types. Inventory the third-party
+        // artifacts only, retaining all of those projects' transitive external dependencies.
+        val resolved = incoming.artifactView {
+            componentFilter { it is ModuleComponentIdentifier }
+        }.artifacts.resolvedArtifacts
         tasks.register<ExportRuntimeArtifacts>("exportRuntimeArtifacts") {
             group = "verification"
             description = "Export resolved debug runtime artifact coordinates, names and SHA-256 hashes."
