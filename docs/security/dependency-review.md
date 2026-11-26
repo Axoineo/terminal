@@ -40,6 +40,20 @@ Record download repository URL, artifact identity, retrieval date, expected upst
 
 Use pinned versions and approved repositories. Review the effective runtime and build-plugin graphs; plugins execute on the build host even when they do not ship in the APK. Do not add unreviewed repositories, dynamic versions, snapshots, downloaded build scripts or blanket checksum/signature exceptions to fix resolution. If verification metadata is generated, review it against trusted evidence before calling it trusted; do not claim that merely hashing the cache verifies its origin.
 
+### Runtime inventory and OSV check
+
+The `:app:exportRuntimeArtifacts` task exports resolved `debugRuntimeClasspath` artifact coordinates, filenames and SHA-256 values to `app/build/reports/runtime-artifacts.tsv`. Columns are exactly `coordinate`, `file`, `sha256`, separated by tabs. It fingerprints resolved AAR/JAR artifacts rather than asserting their publisher identity, and does not expose local cache paths.
+
+```sh
+./gradlew :app:exportRuntimeArtifacts
+python3 scripts/test_audit_runtime_dependencies.py
+python3 scripts/audit_runtime_dependencies.py app/build/reports/runtime-artifacts.tsv --output app/build/reports/runtime-osv-report.json
+```
+
+The thin Python wrapper uses the [official OSV querybatch API](https://google.github.io/osv.dev/post-v1-querybatch/), public Maven coordinates/versions only, batching and per-package pagination. It sends no artifact bytes/hashes or local project paths. Exit 0 means **no mapped OSV findings**, 1 means findings, and 2 means invalid input/API unavailability/incomplete results; JSON distinguishes those statuses. Five offline contract tests exercise project exclusion, pagination and failure handling. They are not a live dependency scan. Store actual CI inventory/JSON results before changing the pending review status.
+
+Apache MINA SSHD is a `testImplementation` peer for loopback tests in `core:data`, not a production SSH dependency. Confirm its absence from the resolved app runtime/APK; do not treat a test dependency as shipped merely because its version appears in the build. Vendored libvterm and package-unmapped advisories still need the manual source/advisory review above even if OSV reports no mapped findings.
+
 ## Runtime and native artifact gate
 
 Capture the actual debug/release runtime graph, including selected variants and dependency substitutions. Distinguish shipped libraries, optional upstream dependencies not present, bundled code inside JARs/AARs, and build/test-only tools. Review crypto/logging additions explicitly. JSch contains JZlib/jBCrypt license notices even without adding separate dependencies; termlib statically embeds libvterm, which a Maven-only graph will not enumerate.

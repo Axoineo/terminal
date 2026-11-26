@@ -8,10 +8,10 @@ With **one experienced Android developer working full time**, a useful first bui
 
 | Included in fast v1 | Boundary |
 | --- | --- |
-| Saved host profiles and one secure SSH route | Explicit host-key enrollment, blocking changed-key behavior, supported authentication and clear connection failures |
+| Hostname/port/username entry and one secure SSH route | Explicit host-key enrollment, blocking changed-key behavior, password authentication and clear connection failures; no saved-profile manager |
 | Existing terminal component | Integrate maintained code; do not write a parser/renderer, shell, package manager or Linux distro |
-| Basic received-output history and explicit saved commands where implemented | Bound retention and state what was actually captured; no claim of complete output while disconnected or automatic per-command result inference |
-| Reopen saved app context | Restore hosts/history; reconnect only through an explicit user action and never replay an unknown command |
+| Optional received-output history | Bound retention and state what was actually captured; no saved-command manager, complete output while disconnected or automatic per-command result inference |
+| Reopen retained history | Show saved received output and its connection metadata; reconnect only through an explicit user action and never replay an unknown command |
 | Dependency/security verification | Exact versions, source provenance, licenses/notices, transitive dependencies, relevant advisories and tested trust/auth behavior |
 
 Advanced file editing, SAF workspace import, synchronization, conflict merges, a host runner, Mosh, backup/restore, and managed local Linux **do not gate fast v1**. Existing experimental workspace work may remain in the repository without being a required v1 workflow or a completed user-facing capability.
@@ -21,8 +21,8 @@ Advanced file editing, SAF workspace import, synchronization, conflict merges, a
 | Allocation within the 3–7 day target | Work and stop condition |
 | --- | --- |
 | Dependency fit and security review | Select one existing terminal component and one SSH library; inspect exact artifacts, compatibility, licenses, provenance and current advisories. A failed fit/security check changes the candidate or estimate. |
-| Small SSH vertical slice | Saved host → verify host key → authenticate → real interactive terminal → disconnect. Use supported library APIs; do not silently install anything on the server. |
-| Saved context/history | Persist non-secret host metadata and bounded received output; show disconnected/capture-gap state. Any stored credentials need their own verified storage design. |
+| Small SSH vertical slice | Enter host/port/username → verify host key → authenticate → real interactive terminal → disconnect. Use supported library APIs; do not silently install anything on the server. |
+| Retained history | Persist connection metadata with opted-in bounded received output; show disconnected/capture-gap state. A saved-profile/command manager is later work only if needed. |
 | Device verification and fixes | Build/install, authenticate, type/paste/resize, reconnect explicitly, reopen history, and test host-key/auth failures. Prioritize failures that block this route. |
 
 These allocations are an execution order, not independently promised day counts. Authentication/IME integration or an unsuitable library can consume the available range. Report that promptly rather than weakening host verification or describing an untested build as ready.
@@ -43,7 +43,7 @@ This is a bounded security review and verification record, not a promise that ev
 
 | Milestone | Planning range | What changes |
 | --- | --- | --- |
-| Fast reusable-library v1 | **3–7 focused development days**, conditional on fit/security checks | Small real SSH terminal with saved hosts/context and bounded saved history |
+| Fast reusable-library v1 | **3–7 focused development days**, conditional on fit/security checks | Small real SSH terminal with host entry, persistent host-key pins and optional bounded received-output history |
 | Hardened version of that SSH product | **6–10 weeks total planning horizon** | Broader device/IME/network/lifecycle testing, accessibility fixes, retention/migrations, auth interoperability and a bounded pilot |
 | Advanced project workspace/editor/sync product | **Re-estimate separately after v1 use** | Add only workflows users repeatedly need; earlier 3–6 month broad-product planning is not the fast-v1 schedule |
 | App-owned managed Linux environment | **Separate feasibility gate; potentially months of additional work** | Modern Android execution/distribution, package ownership, updates and repair can make broad scope a 6–12 month-plus undertaking; it is not required for v1 |

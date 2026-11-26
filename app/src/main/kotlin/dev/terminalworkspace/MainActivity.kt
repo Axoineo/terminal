@@ -169,9 +169,11 @@ private fun ConsoleScreen(model: SshConsoleViewModel) {
                         model.disconnect()
                         terminalVisible = false
                     }) { Text(if (model.busy) "Disconnect" else "Back to connection form") }
-                    TextButton(onClick = requestPaste, enabled = model.connected) { Text("Paste…") }
-                    TextButton(onClick = model.terminal::sendControlC, enabled = model.connected) { Text("Ctrl-C") }
-                    TextButton(onClick = model.terminal::sendTab, enabled = model.connected) { Text("Tab") }
+                    if (model.connected) {
+                        TextButton(onClick = requestPaste) { Text("Paste…") }
+                        TextButton(onClick = model.terminal::sendControlC) { Text("Ctrl-C") }
+                        TextButton(onClick = model.terminal::sendTab) { Text("Tab") }
+                    }
                 }
                 Text(model.recordingMessage, style = MaterialTheme.typography.bodySmall)
             }

@@ -92,7 +92,7 @@ A SAF URI is not a POSIX path. Future sync/repair must not delete user provider 
 ## Delivery and evidence gates
 
 1. Select and review the reused engines, exact provenance/notices and known fixes.
-2. Complete saved host → verified identity → authenticate → terminal → disconnect → reopen optional history.
+2. Complete host/port/username entry → verified identity → authenticate → terminal → disconnect → reopen optional history; no profile/command manager is implied.
 3. Run loopback/JVM checks, compile/build/lint checks and actual Android permission/input/lifecycle/security route; label unrun work honestly.
 4. Harden the narrow product with device/IME/accessibility coverage and field use before expanding scope.
 5. Add editor/sync/runtime work only after its own usefulness and feasibility gates pass.

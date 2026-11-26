@@ -81,21 +81,23 @@ abstract class ExportRuntimeArtifacts : DefaultTask() {
     }
 }
 
-configurations.matching { name == "debugRuntimeClasspath" }.all {
-    val resolved = incoming.artifacts.resolvedArtifacts
-    tasks.register<ExportRuntimeArtifacts>("exportRuntimeArtifacts") {
-        group = "verification"
-        description = "Export resolved debug runtime artifact coordinates, names and SHA-256 hashes."
-        artifactFiles.from(resolved.map { results -> results.map { it.file } })
-        componentsByFile.set(resolved.map { results ->
-            results.associate { artifact ->
-                val component = artifact.id.componentIdentifier
-                artifact.file.absolutePath to when (component) {
-                    is ModuleComponentIdentifier -> "${component.group}:${component.module}:${component.version}"
-                    else -> component.displayName
+configurations.all {
+    if (name == "debugRuntimeClasspath") {
+        val resolved = incoming.artifacts.resolvedArtifacts
+        tasks.register<ExportRuntimeArtifacts>("exportRuntimeArtifacts") {
+            group = "verification"
+            description = "Export resolved debug runtime artifact coordinates, names and SHA-256 hashes."
+            artifactFiles.from(resolved.map { results -> results.map { it.file } })
+            componentsByFile.set(resolved.map { results ->
+                results.associate { artifact ->
+                    val component = artifact.id.componentIdentifier
+                    artifact.file.absolutePath to when (component) {
+                        is ModuleComponentIdentifier -> "${component.group}:${component.module}:${component.version}"
+                        else -> component.displayName
+                    }
                 }
-            }
-        })
-        reportFile.set(layout.buildDirectory.file("reports/runtime-artifacts.tsv"))
+            })
+            reportFile.set(layout.buildDirectory.file("reports/runtime-artifacts.tsv"))
+        }
     }
 }

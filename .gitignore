@@ -10,3 +10,5 @@ local.properties
 captures/
 .tools/
 *.hprof
+__pycache__/
+*.py[cod]

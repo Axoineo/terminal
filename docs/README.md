@@ -28,7 +28,7 @@ Research reviewed **25 November 2026**. The repository separates observed compet
 
 ## Recommended product sequence
 
-Build the small Android SSH v1 with an existing terminal component, saved hosts/context and bounded saved history first. Verify selected dependencies and the host/auth trust boundary. Harden that route on real devices, then add project editing/sync or a managed local runtime only when their separate demand and feasibility gates pass. The conditional time ranges are in the [delivery estimate](product/delivery-estimate.md).
+Build the small Android SSH v1 with host entry, an existing terminal component, trusted host-key pins and optional bounded received-output history first. A saved-profile/command manager is not part of that slice. Verify selected dependencies and the host/auth trust boundary. Harden that route on real devices, then add project editing/sync or a managed local runtime only when their separate demand and feasibility gates pass. The conditional time ranges are in the [delivery estimate](product/delivery-estimate.md).
 
 The four opportunities are **consistent project context**, **verified recovery**, **durable received-output/task evidence**, and **accessible interaction**. Their shared foundation is workspace ownership and honest state. None requires promising unrestricted mobile OS behavior.
 

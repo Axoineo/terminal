@@ -20,13 +20,13 @@ Exit gate: one terminal component and SSH library are selected on evidence, thei
 
 | Issue | Implementable v1 scope | Done when |
 | --- | --- | --- |
-| TW-011 — One supported SSH path | Saved hosts, verified host-key enrollment/change handling, supported auth, real terminal input/output and disconnect | A user connects to a supported test host on an Android device and can work; auth, reachability and changed-key failures are actionable |
-| TW-003 — Persist saved context | Reuse Room for non-secret host/context/history records with an explicit schema | Saved records reopen after app restart; credentials are separately designed or deliberately not retained |
-| TW-012 — Bounded received-output history | Save received output with honest capture boundaries; retain explicit saved commands only where deliberately implemented | Saved content reopens; caps and deletion are defined; uncaptured/disconnected output is never called complete |
+| TW-011 — One supported SSH path | Host/port/username entry, verified host-key enrollment/change handling, password auth, real terminal input/output and disconnect | A user connects to a supported test host on an Android device and can work; auth, reachability and changed-key failures are actionable |
+| TW-003 — Persist opted-in history | Reuse Room for connection metadata and received-output history with an explicit schema | Opted-in records reopen after app restart; no saved-profile manager or persistent credentials are implied |
+| TW-012 — Bounded received-output history | Save received output with honest capture boundaries; no saved-command manager | Saved content reopens; caps and deletion are defined; uncaptured/disconnected output is never called complete |
 | TW-013 — Explicit reconnection | Reopen app context without silently resubmitting commands | Disconnected state is clear; reconnect is deliberate; an uncertain remote outcome is not automatically retried |
 | TW-004 — Basic accessible operation | Labels, focus, readable status, keyboard/IME/paste behavior and essential TalkBack route | Essential actions are tested on a real device; broader terminal/braille claims remain unvalidated until tested |
 
-Exit route: saved host → verify identity → authenticate → existing terminal → deliberate disconnect/reconnect → reopen saved history/context. Include changed-host-key/auth rejection, multiline paste, resize, restart, retention limits and secret-handling checks. Build success and instrumentation compilation alone do not pass this device route.
+Exit route: enter host/port/username → verify identity → authenticate → existing terminal → deliberate disconnect/reconnect → reopen opted-in history and metadata. Include changed-host-key/auth rejection, multiline paste, resize, restart, retention limits and secret-handling checks. Build success and instrumentation compilation alone do not pass this device route. Saved-profile and saved-command managers are not shipped in this slice; add them later only if needed.
 
 Do not infer individual shell command boundaries or success from a PTY screen/prompt. Saved history means the content actually retained by the implemented feature. Raw received output, explicit command snippets and verified task results are different capabilities. No remote host bootstrap, dotfile changes or package installation happens silently.
 
